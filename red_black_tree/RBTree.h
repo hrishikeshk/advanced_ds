@@ -5,7 +5,12 @@
 #include "Consts.h"
 #include "RBNode.h"
 #include "Key.h"
+
+#ifdef _USE_BOOST_
 #include <boost/typeof/std/vector.hpp>
+#else
+#include <vector>
+#endif
 
 class RBTree{
 	UInt32 m_root_ox;

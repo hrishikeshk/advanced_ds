@@ -1,3 +1,6 @@
+To Build : export one environment flag 'SRC_DIR' to the base of the project (<abs_path>/advanced_ds).
+
+
 This is specifically about implementing a red-black tree, that is certain to be heavily used in a larger context. Several implementations are already available. However, the goal here is two-fold :
 1/ Implement a tree that is purely 'offset-based'. Thus, using pointers as links in this structure is eliminated. All links are represented as 4 byte numbers or offsets. This helps in ensuring that the tree does not consume more memory on 64-bit OS and the memory consumed does not change based on the OS architecture.
 

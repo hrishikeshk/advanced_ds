@@ -1,7 +1,7 @@
 PURPOSE :
 
 This is an overall design statement for a Red Black Tree implementation
-suitable for use as an index into a linear storage container.
+suitable for use as a search  index into a linear storage container.
 
 Introduction :
 
@@ -17,7 +17,7 @@ need to store along with some indentifying (key) attribute of those objects.
 
 2/ Create a new class that inherits from the class 'Key' and implements a
 function compare(). This class should maintain references to the list of
-objects and one actual key attribute. The function compare() should use the
+objects and one actual key attribute. The virtual function compare() should use the
 passed offset and the referenced list to first find the object to compare
 with, and then do the comparison.
 
@@ -28,7 +28,7 @@ saving each one at some offset in your list.
 RBTree interface to locate the offset of the object in your list.
 
 Dependencies :
-	1/ std::vector<> available with the Boost Library.
+	1/ It is optional to use std::vector<> available with the Boost Library. Standard Library vector can be used too without side effects.
 	2/ Tested on CentOS Linux 64-bit OS, gcc 4.4.7, but this should work
 elsewhere.
 
@@ -36,7 +36,7 @@ elsewhere.
 Public Interfaces :
 
 	This indexing functionality has two interfaces that are to be utilized by the client classes.
-	1/ Key : The Key is an abstract class that is designed to serve as the base class for Keys defined by the client classes. The client class must implement the function compare() and return the result of comparison with whatever key is passed as input argument. 
+	1/ Key : The Key is an abstract class that is designed to serve as the base class for Keys defined by the client classes. The client class must implement (override) the virtual function compare() and return the result of comparison with whatever key is passed as input argument. 
 
 		virtual Key::RBStatus compare(UInt32 cmp_ox) = 0;
 
@@ -54,7 +54,14 @@ right child nodes. Finally an offset representing the client's data is also
 stored.
 
 	The class 'RBTree' saves the information about the offset of the root
-of the tree. Secondly, it also saves a vector of RBNodes.
+of the tree. Secondly, it also saves a vector of RBNodes. This vector of
+RBNodes is equipped with a 'free list', that can help re-use memory in case of
+interleaved deletes and inserts. Whenever a RBTree Node is deleted, the
+corresponding RBNode object is added to a 'free list' of such nodes. On the
+next inserts, the vector will not be grown, but instead the free list will be
+utilized. Once a node is inserted in the vector of RBNodes, it will never be
+deleted, though, keeping with the assumption of future re-use and striving for
+good amortized response.
 
 
 Dynamic Data Model :
