@@ -26,19 +26,18 @@ Bool RBTree::find_element(const Key& k, UInt32& ref_ox) const{
 			return false;
 		rs = k.compare(exp_ox);
 	}
-	ref_ox = exp_ox;
+	ref_ox = m_nodes[exp_ox].m_payload;
 	return true;
 }
 
-Bool RBTree::insert_element(const Key& k, UInt32& ref_ox){
+Bool RBTree::insert_element(const Key& k, const UInt32 ref_ox){
 
 	RBNode new_node;
-	ref_ox = maxUInt32;
-	UInt32 trailer_ox = maxUInt32;
+	new_node.m_parent_ox = maxUInt32;
 	UInt32 lead_ox = m_root_ox;
 	RBStatus rs;
 	while(lead_ox != maxUInt32){
-		trailer_ox = lead_ox;
+		new_node.m_parent_ox = lead_ox;
 		rs = k.compare(lead_ox);
 		if(rs == MORE){
 			lead_ox = m_nodes[lead_ox].m_right_ox;
@@ -47,15 +46,13 @@ Bool RBTree::insert_element(const Key& k, UInt32& ref_ox){
 			lead_ox = m_nodes[lead_ox].m_left_ox;
 		}
 		else{
-			return false;
+			return false; // Already inserted, return failure to uniquely insert.
 		}
 	}
-	new_node.m_parent_ox = trailer_ox;
-	if(trailer_ox == maxUInt32){
+	if(new_node.m_parent_ox == maxUInt32){
 		m_root_ox = 0;
-		ref_ox = 0;
-		return true;
 	}
+	new_node.m_payload = ref_ox;
 	UInt32 new_node_ox;
 	if(m_first_free_ox != maxUInt32){
 		new_node_ox = m_first_free_ox;
@@ -67,10 +64,12 @@ Bool RBTree::insert_element(const Key& k, UInt32& ref_ox){
 		m_nodes.push_back(new_node);
 	}
 	if(rs == MORE){
-		m_nodes[trailer_ox].m_right_ox = new_node_ox;
+		v_assert(m_nodes[new_node.m_parent_ox].m_right_ox == maxUInt32, "Incorrect child links in the parent to which insertion is being done");
+		m_nodes[new_node.m_parent_ox].m_right_ox = new_node_ox;
 	}
 	else{
-		m_nodes[trailer_ox].m_left_ox = new_node_ox;
+		v_assert(m_nodes[new_node.m_parent_ox].m_left_ox == maxUInt32, "Incorrect child links in the parent to which insertion is being done");
+		m_nodes[new_node.m_parent_ox].m_left_ox = new_node_ox;
 	}
 
 	rb_insert_fixup(new_node_ox);
