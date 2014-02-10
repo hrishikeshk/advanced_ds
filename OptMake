@@ -1,0 +1,13 @@
+MAKE=make
+
+WARN=-Wall
+
+DEBUG=-g -ggdb
+
+CC=g++
+
+SHAREDLIB_FLAGS=-shared -fPIC
+
+FPIC_OBJ=-fPIC
+
+INCLUDES=-I $(SRC_DIR)
