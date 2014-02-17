@@ -13,5 +13,5 @@ unit_tests: simple_tests.o
 	$(CC) -D _DEBUG_BUILD_ $(WARN) $(DEBUG) -L $(SRC_DIR)/libs -lrbtree -o $(SRC_DIR)/libs/simple_tests simple_tests.o
 
 clean:
-	rm -rf *.o
+	rm -rf *.o; rm -rf $(SRC_DIR)/libs/simple_tests
 
