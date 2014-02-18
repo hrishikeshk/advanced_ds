@@ -6,13 +6,10 @@
 #include "RBNode.h"
 #include "Key.h"
 
-#ifdef _USE_BOOST_
-#include <boost/typeof/std/vector.hpp>
-#else
-#include <vector>
-#endif
+#include "Dependent_Includes.h"
 
 class RBTree{
+
 	UInt32 m_root_ox;
 	std::vector<RBNode> m_nodes;
 	UInt32 m_first_free_ox;
@@ -32,7 +29,7 @@ class RBTree{
 
 	void rb_insert_fixup(const UInt32& new_node_ox);
 
-	void rb_delete_fixup(const UInt32& del_node_ox);
+	void rb_delete_fixup(UInt32 child_succ_ox);
 
 	void left_rotate(const UInt32& node_ox);
 

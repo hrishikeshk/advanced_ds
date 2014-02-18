@@ -2,9 +2,9 @@
 #include "Consts.h"
 
 #include "Key.h"
-#include "RBTree.h"
 #include "Common_Funcs.h"
 
+#include "RBTree.h"
 
 Bool RBTree::find_element(const Key& k, UInt32& ref_ox) const{
 
@@ -83,9 +83,9 @@ void RBTree::rb_insert_fixup(const UInt32& new_node_ox){
 	if(par_ox == maxUInt32)
 		return;
 	UInt32 gpar_ox = m_nodes[par_ox].m_parent_ox;
-	UInt32 uncle_ox;
 
 	while(m_nodes[par_ox].m_color == RED){
+		UInt32 uncle_ox;
 		if(par_ox == m_nodes[gpar_ox].m_left_ox){
 			uncle_ox = m_nodes[gpar_ox].m_right_ox;
 			if(uncle_ox != maxUInt32 && m_nodes[uncle_ox].m_color == RED){
@@ -173,7 +173,7 @@ Bool RBTree::delete_element(const Key& k){
 		}
 	}
 	if(node_succ_ox != del_node_ox){
-		m_nodes[del_node_ox] = m_nodes[node_succ_ox];
+		m_nodes[del_node_ox].m_payload = m_nodes[node_succ_ox].m_payload;
 		m_nodes[node_succ_ox].m_next_free_ox = m_first_free_ox;
 		m_first_free_ox = node_succ_ox;
 	}
@@ -183,8 +183,65 @@ Bool RBTree::delete_element(const Key& k){
 	return true;
 }
 
-void RBTree::rb_delete_fixup(const UInt32& del_node_ox){
-
+void RBTree::rb_delete_fixup(UInt32 child_succ_ox){
+	while(child_succ_ox != maxUInt32 && child_succ_ox != m_root_ox && m_nodes[child_succ_ox].m_color == BLACK){
+		UInt32 par_ox = m_nodes[child_succ_ox].m_parent_ox;
+		if(child_succ_ox == m_nodes[par_ox].m_left_ox){
+			UInt32 sibling_ox = m_nodes[par_ox].m_right_ox;
+			if(m_nodes[sibling_ox].m_color == RED){
+				m_nodes[sibling_ox].m_color = BLACK;
+				m_nodes[par_ox].m_color = RED;
+				left_rotate(par_ox);
+				sibling_ox = m_nodes[m_nodes[child_succ_ox].m_parent_ox].m_right_ox;
+			}
+			UInt32 sibling_left_ox = m_nodes[sibling_ox].m_left_ox;
+			UInt32 sibling_right_ox = m_nodes[sibling_ox].m_right_ox;
+			if(m_nodes[sibling_left_ox].m_color == BLACK && m_nodes[sibling_right_ox].m_color == BLACK){
+				m_nodes[sibling_ox].m_color = RED;
+				child_succ_ox = m_nodes[child_succ_ox].m_parent_ox;
+			}
+			else if(m_nodes[sibling_right_ox].m_color == BLACK){
+				m_nodes[sibling_left_ox].m_color = BLACK;
+				m_nodes[sibling_ox].m_color = RED;
+				right_rotate(sibling_ox);
+				par_ox = m_nodes[child_succ_ox].m_parent_ox;
+				sibling_ox = m_nodes[par_ox].m_right_ox;
+				m_nodes[sibling_ox].m_color = m_nodes[par_ox].m_color;
+				m_nodes[par_ox].m_color = BLACK;
+				m_nodes[m_nodes[sibling_ox].m_right_ox].m_color = BLACK;
+				left_rotate(par_ox);
+				child_succ_ox = m_root_ox;
+			}
+		}
+		else{
+			UInt32 sibling_ox = m_nodes[par_ox].m_left_ox;
+			if(m_nodes[sibling_ox].m_color == RED){
+				m_nodes[sibling_ox].m_color = BLACK;
+				m_nodes[par_ox].m_color = RED;
+				right_rotate(par_ox);
+				sibling_ox = m_nodes[m_nodes[child_succ_ox].m_parent_ox].m_left_ox;
+			}
+			UInt32 sibling_left_ox = m_nodes[sibling_ox].m_left_ox;
+			UInt32 sibling_right_ox = m_nodes[sibling_ox].m_right_ox;
+			if(m_nodes[sibling_left_ox].m_color == BLACK && m_nodes[sibling_right_ox].m_color == BLACK){
+				m_nodes[sibling_ox].m_color = RED;
+				child_succ_ox = m_nodes[child_succ_ox].m_parent_ox;
+			}
+			else if(m_nodes[sibling_left_ox].m_color == BLACK){
+				m_nodes[sibling_right_ox].m_color = BLACK;
+				m_nodes[sibling_ox].m_color = RED;
+				left_rotate(sibling_ox);
+				par_ox = m_nodes[child_succ_ox].m_parent_ox;
+				sibling_ox = m_nodes[par_ox].m_left_ox;
+				m_nodes[sibling_ox].m_color = m_nodes[par_ox].m_color;
+				m_nodes[par_ox].m_color = BLACK;
+				m_nodes[m_nodes[sibling_ox].m_left_ox].m_color = BLACK;
+				right_rotate(par_ox);
+				child_succ_ox = m_root_ox;
+			}
+		}
+	}
+	m_nodes[child_succ_ox].m_color = BLACK;
 }
 
 void RBTree::left_rotate(const UInt32& node_ox){

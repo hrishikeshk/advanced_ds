@@ -1,3 +1,11 @@
+TODO :
+1/ Move free list offsets list to Tree, out of RBNode
+2/ UTs
+3/ Benchmarks, comparisons
+4/ Sample usage and documentation.
+
+
+
 PURPOSE :
 
 This is an overall design statement for a Red Black Tree implementation
