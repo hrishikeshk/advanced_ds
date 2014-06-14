@@ -10,8 +10,8 @@ Bool v_assert(Bool val, const std::string& mesg){
 #ifdef _DEBUG_BUILD_
 	if(val == false){
 		std::cout << mesg << "\n";
+		assert(val);
 	}
-	assert(val);
 #else
 	if(val == false){
 		std::cerr << "*********** \n FATAL problem detected\n ***********\n";

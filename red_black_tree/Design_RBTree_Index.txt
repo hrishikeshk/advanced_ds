@@ -9,7 +9,9 @@ TODO :
 PURPOSE :
 
 This is an overall design statement for a Red Black Tree implementation
-suitable for use as a search  index into a linear storage container.
+suitable for use as a search  index into a linear storage container. The focus
+here is just on how to use the RBTree as an index and not on the
+implementation of the RBTree itself, since that is fairly standard one. 
 
 Introduction :
 
@@ -23,7 +25,7 @@ The way to use this index is as follows:
 1/ Create your own list of objects, that includes all satellite data that you
 need to store along with some indentifying (key) attribute of those objects.
 
-2/ Create a new class that inherits from the class 'Key' and implements a
+2/ Create a new class that inherits from the class 'Key' and overrides a
 function compare(). This class should maintain references to the list of
 objects and one actual key attribute. The virtual function compare() should use the
 passed offset and the referenced list to first find the object to compare

@@ -16,8 +16,7 @@ class RBTree{
 	
 	public:
 	
-	RBTree():m_root_ox(maxUInt32), m_first_free_ox(maxUInt32){
-	}
+	RBTree();
 
 	Bool insert_element(const Key& k, const UInt32 ref_ox);
 
