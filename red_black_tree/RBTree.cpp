@@ -6,13 +6,16 @@
 
 #include "RBTree.h"
 
-RBTree::RBTree():m_root_ox(maxUInt32), m_first_free_ox(maxUInt32){
+RBTree::RBTree():m_root_ox(m_nil_ox), m_first_free_ox(maxUInt32){
+	RBNode nil_node; // Sentinel
+	nil_node.m_color = BLACK;
+	m_nodes.push_back(nil_node);
 }
 
 Bool RBTree::find_element(const Key& k, UInt32& ref_ox) const{
 
-	ref_ox = maxUInt32;
-	if(m_root_ox == maxUInt32)
+	ref_ox = m_nil_ox;
+	if(m_root_ox == m_nil_ox)
 		return false;
 
 	UInt32 exp_ox = m_root_ox;
@@ -25,7 +28,7 @@ Bool RBTree::find_element(const Key& k, UInt32& ref_ox) const{
 		else{
 			exp_ox = m_nodes[exp_ox].m_right_ox;
 		}
-		if(exp_ox == maxUInt32)
+		if(exp_ox == m_nil_ox)
 			return false;
 		rs = k.compare(exp_ox);
 	}
@@ -36,10 +39,9 @@ Bool RBTree::find_element(const Key& k, UInt32& ref_ox) const{
 Bool RBTree::insert_element(const Key& k, const UInt32 ref_ox){
 
 	RBNode new_node;
-	new_node.m_parent_ox = maxUInt32;
 	UInt32 lead_ox = m_root_ox;
-	RBStatus rs;
-	while(lead_ox != maxUInt32){
+	RBStatus rs = EQUAL;
+	while(lead_ox != m_nil_ox){
 		new_node.m_parent_ox = lead_ox;
 		rs = k.compare(lead_ox);
 		if(rs == MORE){
@@ -51,9 +53,6 @@ Bool RBTree::insert_element(const Key& k, const UInt32 ref_ox){
 		else{
 			return false; // Already inserted, return failure to uniquely insert.
 		}
-	}
-	if(new_node.m_parent_ox == maxUInt32){
-		m_root_ox = 0;
 	}
 	new_node.m_payload = ref_ox;
 	UInt32 new_node_ox;
@@ -68,13 +67,17 @@ Bool RBTree::insert_element(const Key& k, const UInt32 ref_ox){
 	}
 	if(rs == MORE){
 		v_assert(m_nodes[new_node.m_parent_ox].m_right_ox == maxUInt32, "Incorrect child links in the parent to which insertion is being done");
-		m_nodes[new_node.m_parent_ox].m_right_ox = new_node_ox;
+		if(new_node.m_parent_ox != m_nil_ox)
+			m_nodes[new_node.m_parent_ox].m_right_ox = new_node_ox;
 	}
-	else{
+	else if(rs == LESS){
 		v_assert(m_nodes[new_node.m_parent_ox].m_left_ox == maxUInt32, "Incorrect child links in the parent to which insertion is being done");
-		m_nodes[new_node.m_parent_ox].m_left_ox = new_node_ox;
+		if(new_node.m_parent_ox != m_nil_ox)
+			m_nodes[new_node.m_parent_ox].m_left_ox = new_node_ox;
 	}
-
+	if(m_root_ox == m_nil_ox){
+		m_root_ox = new_node_ox;
+	}
 	rb_insert_fixup(new_node_ox);
 	return true;
 }
@@ -83,8 +86,6 @@ void RBTree::rb_insert_fixup(const UInt32& new_node_ox){
 
 	UInt32 curr_node_ox = new_node_ox;
 	UInt32 par_ox = m_nodes[curr_node_ox].m_parent_ox;
-	if(par_ox == maxUInt32)
-		return;
 	UInt32 gpar_ox = m_nodes[par_ox].m_parent_ox;
 
 	while(m_nodes[par_ox].m_color == RED){

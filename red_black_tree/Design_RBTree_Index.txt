@@ -3,7 +3,9 @@ TODO :
 2/ UTs
 3/ Benchmarks, comparisons
 4/ Sample usage and documentation.
-
+5/ Use sentinel based flow for NIL leaves
+6/ Make free list build time option
+7/ Use AutoConf
 
 
 PURPOSE :
