@@ -18,21 +18,23 @@ Bool RBTree::find_element(const Key& k, UInt32& ref_ox) const{
 	if(m_root_ox == m_nil_ox)
 		return false;
 
-	UInt32 exp_ox = m_root_ox;
+	UInt32 exp_ox = m_nodes[m_root_ox].m_payload;
 	RBStatus rs = k.compare(exp_ox);
+
+	UInt32 ptr_ox = m_root_ox;
 
 	while(rs != EQUAL){
 		if(rs == LESS){
-			exp_ox = m_nodes[exp_ox].m_left_ox;
+			ptr_ox = m_nodes[ptr_ox].m_left_ox;
 		}
 		else{
-			exp_ox = m_nodes[exp_ox].m_right_ox;
+			ptr_ox = m_nodes[ptr_ox].m_right_ox;
 		}
-		if(exp_ox == m_nil_ox)
+		if(ptr_ox == m_nil_ox)
 			return false;
-		rs = k.compare(exp_ox);
+		rs = k.compare(m_nodes[ptr_ox].m_payload);
 	}
-	ref_ox = m_nodes[exp_ox].m_payload;
+	ref_ox = m_nodes[ptr_ox].m_payload;
 	return true;
 }
 
