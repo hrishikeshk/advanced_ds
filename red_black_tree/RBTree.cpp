@@ -45,7 +45,7 @@ Bool RBTree::insert_element(const Key& k, const UInt32 ref_ox){
 	RBStatus rs = EQUAL;
 	while(lead_ox != m_nil_ox){
 		new_node.m_parent_ox = lead_ox;
-		rs = k.compare(lead_ox);
+		rs = k.compare(m_nodes[lead_ox].m_payload);
 		if(rs == MORE){
 			lead_ox = m_nodes[lead_ox].m_right_ox;
 		}

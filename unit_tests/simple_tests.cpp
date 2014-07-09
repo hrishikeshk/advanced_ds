@@ -36,11 +36,71 @@ void simple_insert_RBTree(){
 	BOOST_REQUIRE(searched_ox == ref_ox);
 }
 
+void multi_insert_RBTree(){
+	RBTree rbt;
+	std::vector<UInt32> array(10);
+	for(UInt32 i = 0; i < 10; ++i){
+		array[i] = i;
+		Test_Sorted_Order_Key tk(array, i);
+	
+		BOOST_REQUIRE(rbt.insert_element(tk, i) == true);
+
+		UInt32 searched_ox;
+		BOOST_REQUIRE(rbt.find_element(tk, searched_ox) == true);
+
+		BOOST_REQUIRE(searched_ox == i);
+	}
+
+	for(UInt32 i = 0; i < 10; ++i){
+		Test_Sorted_Order_Key tk(array, i);
+		
+		UInt32 searched_ox;
+		BOOST_REQUIRE(rbt.find_element(tk, searched_ox) == true);
+
+		BOOST_REQUIRE(searched_ox == i);
+	}
+}
+
+void multi_random_insert_RBTree(){
+	RBTree rbt;
+	std::vector<UInt32> array(10);
+	array[0] = 4;
+	array[1] = 43;
+	array[2] = 23;
+	array[3] = 6;
+	array[4] = 57;
+	array[5] = 5;
+	array[6] = 8;
+	array[7] = 1018;
+	array[8] = 54;
+	array[9] = 67;
+
+	for(UInt32 i = 0; i < 10; ++i){
+
+		Test_Sorted_Order_Key tk(array, i);
+	
+		BOOST_REQUIRE(rbt.insert_element(tk, i) == true);
+
+		UInt32 searched_ox;
+		BOOST_REQUIRE(rbt.find_element(tk, searched_ox) == true);
+
+		BOOST_REQUIRE(searched_ox == i);
+	}
+
+	for(UInt32 i = 0; i < 10; ++i){
+		Test_Sorted_Order_Key tk(array, i);
+		
+		UInt32 searched_ox;
+		BOOST_REQUIRE(rbt.find_element(tk, searched_ox) == true);
+
+		BOOST_REQUIRE(searched_ox == i);
+	}
+}
+
 BOOST_AUTO_TEST_SUITE ( test_suite1 )
 
 BOOST_AUTO_TEST_CASE( ctor_RBNode ){
 	simple_ctor_RBNode();
-
 }
 
 BOOST_AUTO_TEST_CASE( ctor_RBTree ){
@@ -49,6 +109,14 @@ BOOST_AUTO_TEST_CASE( ctor_RBTree ){
 
 BOOST_AUTO_TEST_CASE( insert_1_RBTree ){
 	simple_insert_RBTree();
+}
+
+BOOST_AUTO_TEST_CASE( insert_10_RBTree ){
+	multi_insert_RBTree();
+}
+
+BOOST_AUTO_TEST_CASE( insert_rand10_RBTree ){
+	multi_random_insert_RBTree();
 }
 
 BOOST_AUTO_TEST_SUITE_END()
