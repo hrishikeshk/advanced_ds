@@ -31,29 +31,34 @@ void RBTree::inorder(UInt32 root, std::vector<UInt32>& o_contents){
 }
 
 Bool RBTree::find_element(const Key& k, UInt32& ref) const{
+	UInt32 pos;
+	return find_detailed(k, ref, pos);
+}
+
+Bool RBTree::find_detailed(const Key& k, UInt32& ref, UInt32& pos) const{
 
 	ref = m_nil;
-	if(m_root == m_nil)
-		return false;
+        if(m_root == m_nil)
+                return false;
 
-	UInt32 exp = m_nodes[m_root].m_payload;
-	RBStatus rs = k.compare(exp);
+        UInt32 exp = m_nodes[m_root].m_payload;
+        RBStatus rs = k.compare(exp);
 
-	UInt32 ptr = m_root;
+        pos = m_root;
 
-	while(rs != EQUAL){
-		if(rs == LESS){
-			ptr = m_nodes[ptr].m_left;
-		}
-		else{
-			ptr = m_nodes[ptr].m_right;
-		}
-		if(ptr == m_nil)
-			return false;
-		rs = k.compare(m_nodes[ptr].m_payload);
-	}
-	ref = m_nodes[ptr].m_payload;
-	return true;
+        while(rs != EQUAL){
+                if(rs == LESS){
+                        pos = m_nodes[pos].m_left;
+                }
+                else{
+                        pos = m_nodes[pos].m_right;
+                }
+                if(pos == m_nil)
+                        return false;
+                rs = k.compare(m_nodes[pos].m_payload);
+        }
+        ref = m_nodes[pos].m_payload;
+        return true;
 }
 
 Bool RBTree::insert_element(const Key& k, const UInt32 ref){
@@ -159,8 +164,8 @@ void RBTree::rb_insert_fixup(const UInt32& new_node){
 
 Bool RBTree::delete_element(const Key& k){
 
-	UInt32 del_node;
-	Bool ret = find_element(k, del_node);
+	UInt32 del_node, ref;
+	Bool ret = find_detailed(k, ref, del_node);
 	if(ret == false || del_node == m_nil)
 		return false;
 

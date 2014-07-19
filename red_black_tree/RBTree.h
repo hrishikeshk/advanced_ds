@@ -39,6 +39,8 @@ class RBTree{
 	UInt32 tree_successor(const UInt32& node) const;
 
 	void inorder(UInt32 root, std::vector<UInt32>& o_contents);
+
+	Bool find_detailed(const Key& k, UInt32& ref, UInt32& pos) const;
 };
 
 #endif
