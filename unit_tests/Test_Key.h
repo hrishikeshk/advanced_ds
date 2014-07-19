@@ -20,10 +20,10 @@ class Test_Sorted_Order_Key : public Key{
 	Test_Sorted_Order_Key(const std::vector<UInt32>& arr, UInt32 offset):m_array(arr), m_offset(offset){
 	}
 	RBStatus compare(const UInt32 cmp_ox) const{
-		if(m_array[cmp_ox] < m_array[m_offset]){
+		if(m_array[m_offset] < m_array[cmp_ox]){
 			return LESS;
 		}
-		else if(m_array[cmp_ox] > m_array[m_offset]){
+		else if(m_array[m_offset] > m_array[cmp_ox]){
 			return MORE;
 		}
 		return EQUAL;

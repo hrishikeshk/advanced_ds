@@ -42,6 +42,7 @@ RBTree interface to locate the offset of the object in your list.
 Dependencies :
 	1/ It is optional to use std::vector<> available with the Boost Library. Standard Library vector can be used too without side effects.
 	2/ Tested on CentOS Linux 64-bit OS, gcc 4.4.7, but this should work
+	3/ Requires Boost library ver 1.41.0
 elsewhere.
 
 

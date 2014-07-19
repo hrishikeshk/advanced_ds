@@ -138,6 +138,46 @@ void multi_random_insert_failure_RBTree(){
 	}
 }
 
+void multi_random_insert_RBTree_Order_Check(){
+	RBTree rbt;
+	std::vector<UInt32> array(10);
+	array[0] = 4;
+	array[1] = 43;
+	array[2] = 23;
+	array[3] = 6;
+	array[4] = 57;
+	array[5] = 5;
+	array[6] = 8;
+	array[7] = 1018;
+	array[8] = 54;
+	array[9] = 67;
+
+	for(UInt32 i = 0; i < 10; ++i){
+
+		Test_Sorted_Order_Key tk(array, i);
+	
+		BOOST_REQUIRE(rbt.insert_element(tk, i) == true);
+	}
+
+	std::vector<UInt32> o_contents;
+
+	rbt.traverse_inorder(o_contents);
+
+	UInt32 sz = o_contents.size();
+
+	BOOST_REQUIRE(sz == 10);
+
+	for(UInt32 i = 0; i < sz; ++i){
+		std::cout << array[o_contents[i]] << " ";
+	}
+	std::cout << "\n";
+
+	for(UInt32 i = 1; i < sz; ++i){
+		BOOST_REQUIRE(array[o_contents[i]] > array[o_contents[i - 1]]);
+	}
+}
+
+
 BOOST_AUTO_TEST_SUITE ( test_suite1 )
 
 BOOST_AUTO_TEST_CASE( ctor_RBNode ){
@@ -162,6 +202,10 @@ BOOST_AUTO_TEST_CASE( insert_rand10_RBTree ){
 
 BOOST_AUTO_TEST_CASE( insert_rand10_failure_RBTree ){
 	multi_random_insert_failure_RBTree();
+}
+
+BOOST_AUTO_TEST_CASE( insert_rand10_order_check_RBTree ){
+	multi_random_insert_RBTree_Order_Check();
 }
 
 BOOST_AUTO_TEST_SUITE_END()
