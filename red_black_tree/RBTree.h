@@ -18,11 +18,11 @@ class RBTree{
 	
 	RBTree();
 
-	Bool insert_element(const Key& k, const UInt32 ref);
+	Bool insert(const Key& k, const UInt32 ref);
 
-	Bool find_element(const Key& k, UInt32& ref) const;
+	Bool find(const Key& k, UInt32& ref) const;
 
-	Bool delete_element(const Key& k);
+	Bool remove(const Key& k);
 
 	void traverse_inorder(std::vector<UInt32>& o_contents);
 
@@ -30,7 +30,7 @@ class RBTree{
 
 	void rb_insert_fixup(const UInt32& new_node);
 
-	void rb_delete_fixup(UInt32 child_succ);
+	void rb_remove_fixup(UInt32 child_succ);
 
 	void left_rotate(const UInt32& node);
 

@@ -20,7 +20,7 @@ void simple_ctor_RBTree(){
 	RBTree rbt;
 	Test_Key tk;
 	UInt32 ox = 0;
-	BOOST_REQUIRE(rbt.find_element(tk, ox) == false);
+	BOOST_REQUIRE(rbt.find(tk, ox) == false);
 }
 
 void simple_insert_RBTree(){
@@ -30,10 +30,10 @@ void simple_insert_RBTree(){
 	Test_Sorted_Order_Key tk(array, 0);
 	UInt32 ref = 0;
 
-	BOOST_REQUIRE(rbt.insert_element(tk, ref) == true);
+	BOOST_REQUIRE(rbt.insert(tk, ref) == true);
 
 	UInt32 searched;
-	BOOST_REQUIRE(rbt.find_element(tk, searched) == true);
+	BOOST_REQUIRE(rbt.find(tk, searched) == true);
 
 	BOOST_REQUIRE(searched == ref);
 }
@@ -45,10 +45,10 @@ void multi_insert_RBTree(){
 		array[i] = i;
 		Test_Sorted_Order_Key tk(array, i);
 	
-		BOOST_REQUIRE(rbt.insert_element(tk, i) == true);
+		BOOST_REQUIRE(rbt.insert(tk, i) == true);
 
 		UInt32 searched;
-		BOOST_REQUIRE(rbt.find_element(tk, searched) == true);
+		BOOST_REQUIRE(rbt.find(tk, searched) == true);
 
 		BOOST_REQUIRE(searched == i);
 	}
@@ -57,7 +57,7 @@ void multi_insert_RBTree(){
 		Test_Sorted_Order_Key tk(array, i);
 		
 		UInt32 searched;
-		BOOST_REQUIRE(rbt.find_element(tk, searched) == true);
+		BOOST_REQUIRE(rbt.find(tk, searched) == true);
 
 		BOOST_REQUIRE(searched == i);
 	}
@@ -81,10 +81,10 @@ void multi_random_insert_RBTree(){
 
 		Test_Sorted_Order_Key tk(array, i);
 	
-		BOOST_REQUIRE(rbt.insert_element(tk, i) == true);
+		BOOST_REQUIRE(rbt.insert(tk, i) == true);
 
 		UInt32 searched;
-		BOOST_REQUIRE(rbt.find_element(tk, searched) == true);
+		BOOST_REQUIRE(rbt.find(tk, searched) == true);
 
 		BOOST_REQUIRE(searched == i);
 	}
@@ -93,7 +93,7 @@ void multi_random_insert_RBTree(){
 		Test_Sorted_Order_Key tk(array, i);
 		
 		UInt32 searched;
-		BOOST_REQUIRE(rbt.find_element(tk, searched) == true);
+		BOOST_REQUIRE(rbt.find(tk, searched) == true);
 
 		BOOST_REQUIRE(searched == i);
 	}
@@ -117,10 +117,10 @@ void multi_random_insert_failure_RBTree(){
 
 		Test_Sorted_Order_Key tk(array, i);
 	
-		BOOST_REQUIRE(rbt.insert_element(tk, i) == true);
+		BOOST_REQUIRE(rbt.insert(tk, i) == true);
 
 		UInt32 searched;
-		BOOST_REQUIRE(rbt.find_element(tk, searched) == true);
+		BOOST_REQUIRE(rbt.find(tk, searched) == true);
 
 		BOOST_REQUIRE(searched == i);
 	}
@@ -129,14 +129,14 @@ void multi_random_insert_failure_RBTree(){
 		Test_Sorted_Order_Key tk(array, i);
 		
 		UInt32 searched;
-		BOOST_REQUIRE(rbt.find_element(tk, searched) == true);
+		BOOST_REQUIRE(rbt.find(tk, searched) == true);
 
 		BOOST_REQUIRE(searched == i);
 	}
 
 	for(UInt32 i = 0; i < 10; ++i){
 		Test_Sorted_Order_Key tk(array, i);
-		BOOST_REQUIRE(rbt.insert_element(tk, i) == false);
+		BOOST_REQUIRE(rbt.insert(tk, i) == false);
 	}
 }
 
@@ -158,7 +158,7 @@ void multi_random_insert_RBTree_Order_Check(){
 
 		Test_Sorted_Order_Key tk(array, i);
 	
-		BOOST_REQUIRE(rbt.insert_element(tk, i) == true);
+		BOOST_REQUIRE(rbt.insert(tk, i) == true);
 	}
 
 	std::vector<UInt32> o_contents;
@@ -200,7 +200,7 @@ void multi_random_insert_Stepwise_Order_Check(){
 
 		Test_Sorted_Order_Key tk(array, i);
 	
-		BOOST_REQUIRE(rbt.insert_element(tk, i) == true);
+		BOOST_REQUIRE(rbt.insert(tk, i) == true);
 		
 		rbt.traverse_inorder(o_contents);
 		UInt32 sz = o_contents.size();
@@ -218,7 +218,7 @@ void multi_permute_insert_Stepwise_Order_Check(const std::vector<UInt32>& array)
 
 		Test_Sorted_Order_Key tk(array, i);
 	
-		BOOST_REQUIRE(rbt.insert_element(tk, i) == true);
+		BOOST_REQUIRE(rbt.insert(tk, i) == true);
 		
 		rbt.traverse_inorder(o_contents);
 		UInt32 sz = o_contents.size();
@@ -236,70 +236,73 @@ void simple_delete_RBTree(){
 	Test_Sorted_Order_Key tk(array, 0);
 	UInt32 ref = 0;
 
-	BOOST_REQUIRE(rbt.insert_element(tk, ref) == true);
+	BOOST_REQUIRE(rbt.insert(tk, ref) == true);
 
 	UInt32 searched;
-	BOOST_REQUIRE(rbt.find_element(tk, searched) == true);
+	BOOST_REQUIRE(rbt.find(tk, searched) == true);
 
 	BOOST_REQUIRE(searched == ref);
 
-	BOOST_REQUIRE(rbt.delete_element(tk) == true);
+	BOOST_REQUIRE(rbt.remove(tk) == true);
 
-	BOOST_REQUIRE(rbt.find_element(tk, searched) == false);
+	BOOST_REQUIRE(rbt.find(tk, searched) == false);
 }
 
-void multi_delete_RBTree(){
+void multi_delete_RBTree(const std::vector<UInt32>& order_of_removal){
         RBTree rbt;
-        std::vector<UInt32> array(10);
-        for(UInt32 i = 0; i < 10; ++i){
+        std::vector<UInt32> array(order_of_removal.size());
+        for(UInt32 i = 0; i < order_of_removal.size(); ++i){
                 array[i] = i;
                 Test_Sorted_Order_Key tk(array, i);
 
-                BOOST_REQUIRE(rbt.insert_element(tk, i) == true);
+                BOOST_REQUIRE(rbt.insert(tk, i) == true);
 
                 UInt32 searched;
-                BOOST_REQUIRE(rbt.find_element(tk, searched) == true);
+                BOOST_REQUIRE(rbt.find(tk, searched) == true);
 
                 BOOST_REQUIRE(searched == i);
         }
 
-std::cout << "Starting deletes\n";
+        for(UInt32 i = 0; i < order_of_removal.size(); ++i){
+                Test_Sorted_Order_Key tk(array, order_of_removal[i]);
 
-        for(UInt32 i = 0; i < 10; ++i){
-                Test_Sorted_Order_Key tk(array, i);
-
-std::cout << "deleting " << i << "\n";
-		BOOST_REQUIRE(rbt.delete_element(tk) == true);
-std::cout << "trying to find " << i << "\n";
                 UInt32 searched;
-                BOOST_REQUIRE(rbt.find_element(tk, searched) == false);
+                BOOST_REQUIRE(rbt.find(tk, searched) == true);
+
+		BOOST_REQUIRE(rbt.remove(tk) == true);
+
+                //UInt32 searched;
+                BOOST_REQUIRE(rbt.find(tk, searched) == false);
         }
 }
 
 void delete_2_RBTree(){
         RBTree rbt;
-        std::vector<UInt32> array(2);
-        array[0] = 1;
-        array[1] = 2;
+        std::vector<UInt32> array(3);
+        array[0] = 2;
+        array[1] = 1;
+        array[2] = 3;
         Test_Sorted_Order_Key tk0(array, 0);
-        BOOST_REQUIRE(rbt.insert_element(tk0, 0) == true);
+        BOOST_REQUIRE(rbt.insert(tk0, 0) == true);
         Test_Sorted_Order_Key tk1(array, 1);
-        BOOST_REQUIRE(rbt.insert_element(tk1, 1) == true);
+        BOOST_REQUIRE(rbt.insert(tk1, 1) == true);
+        Test_Sorted_Order_Key tk2(array, 2);
+        BOOST_REQUIRE(rbt.insert(tk1, 2) == true);
 
-std::cout << "Starting deletes\n";
-std::cout << "deleting  0 \n";
-		BOOST_REQUIRE(rbt.delete_element(tk0) == true);
-std::cout << "trying to find 0\n";
         UInt32 searched;
-        BOOST_REQUIRE(rbt.find_element(tk0, searched) == false);
 
-std::cout << "deleting  1 \n";
-		BOOST_REQUIRE(rbt.delete_element(tk1) == true);
-std::cout << "trying to find 1\n";
-        BOOST_REQUIRE(rbt.find_element(tk1, searched) == false);
+	BOOST_REQUIRE(rbt.remove(tk0) == true);
+        BOOST_REQUIRE(rbt.find(tk0, searched) == false);
+
+	BOOST_REQUIRE(rbt.remove(tk1) == true);
+        BOOST_REQUIRE(rbt.find(tk1, searched) == false);
+
+	BOOST_REQUIRE(rbt.remove(tk2) == true);
+        BOOST_REQUIRE(rbt.find(tk2, searched) == false);
 }
 
 BOOST_AUTO_TEST_SUITE ( test_suite1 )
+
 
 BOOST_AUTO_TEST_CASE( ctor_RBNode ){
 	simple_ctor_RBNode();
@@ -352,15 +355,28 @@ BOOST_AUTO_TEST_CASE( delete_1_RBTree ){
 	simple_delete_RBTree();
 }
 
+
 BOOST_AUTO_TEST_CASE( delete_2_RBTree ){
 	delete_2_RBTree();
 }
 
-/*
+
 BOOST_AUTO_TEST_CASE( delete_10_RBTree ){
-	multi_delete_RBTree();
+	std::vector<UInt32> array(8);
+	array[0] = 4;
+	array[1] = 3;
+	array[2] = 5;
+	array[3] = 2;
+	array[4] = 7;
+	array[5] = 0;
+	array[6] = 6;
+	array[7] = 1;
+
+	std::vector<UInt32> target(8);
+
+	permute_and_call(array, target, 0, multi_delete_RBTree);
 }
-*/
+
 
 BOOST_AUTO_TEST_SUITE_END()
 

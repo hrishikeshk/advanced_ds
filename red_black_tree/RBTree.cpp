@@ -30,7 +30,7 @@ void RBTree::inorder(UInt32 root, std::vector<UInt32>& o_contents){
 	}
 }
 
-Bool RBTree::find_element(const Key& k, UInt32& ref) const{
+Bool RBTree::find(const Key& k, UInt32& ref) const{
 	UInt32 pos;
 	return find_detailed(k, ref, pos);
 }
@@ -61,7 +61,7 @@ Bool RBTree::find_detailed(const Key& k, UInt32& ref, UInt32& pos) const{
         return true;
 }
 
-Bool RBTree::insert_element(const Key& k, const UInt32 ref){
+Bool RBTree::insert(const Key& k, const UInt32 ref){
 
 	RBNode new_node;
 	UInt32 lead = m_root;
@@ -162,7 +162,7 @@ void RBTree::rb_insert_fixup(const UInt32& new_node){
 	m_nodes[m_root].m_color = BLACK;
 }
 
-Bool RBTree::delete_element(const Key& k){
+Bool RBTree::remove(const Key& k){
 
 	UInt32 del_node, ref;
 	Bool ret = find_detailed(k, ref, del_node);
@@ -207,12 +207,13 @@ Bool RBTree::delete_element(const Key& k){
 	m_first_free = node_succ;
 
 	if(m_nodes[node_succ].m_color == BLACK){
-		rb_delete_fixup(child_succ);
+		rb_remove_fixup(child_succ);
 	}
 	return true;
 }
 
-void RBTree::rb_delete_fixup(UInt32 child_succ){
+void RBTree::rb_remove_fixup(UInt32 child_successor){
+	UInt32 child_succ = child_successor;
 	while(child_succ != m_nil && child_succ != m_root && m_nodes[child_succ].m_color == BLACK){
 		UInt32 par = m_nodes[child_succ].m_parent;
 		if(child_succ == m_nodes[par].m_left){
@@ -235,12 +236,12 @@ void RBTree::rb_delete_fixup(UInt32 child_succ){
 				right_rotate(sibling);
 				par = m_nodes[child_succ].m_parent;
 				sibling = m_nodes[par].m_right;
-				m_nodes[sibling].m_color = m_nodes[par].m_color;
-				m_nodes[par].m_color = BLACK;
-				m_nodes[m_nodes[sibling].m_right].m_color = BLACK;
-				left_rotate(par);
-				child_succ = m_root;
 			}
+			m_nodes[sibling].m_color = m_nodes[par].m_color;
+			m_nodes[par].m_color = BLACK;
+			m_nodes[m_nodes[sibling].m_right].m_color = BLACK;
+			left_rotate(par);
+			child_succ = m_root;
 		}
 		else{
 			UInt32 sibling = m_nodes[par].m_left;
@@ -262,12 +263,12 @@ void RBTree::rb_delete_fixup(UInt32 child_succ){
 				left_rotate(sibling);
 				par = m_nodes[child_succ].m_parent;
 				sibling = m_nodes[par].m_left;
-				m_nodes[sibling].m_color = m_nodes[par].m_color;
-				m_nodes[par].m_color = BLACK;
-				m_nodes[m_nodes[sibling].m_left].m_color = BLACK;
-				right_rotate(par);
-				child_succ = m_root;
 			}
+			m_nodes[sibling].m_color = m_nodes[par].m_color;
+			m_nodes[par].m_color = BLACK;
+			m_nodes[m_nodes[sibling].m_left].m_color = BLACK;
+			right_rotate(par);
+			child_succ = m_root;
 		}
 	}
 	m_nodes[child_succ].m_color = BLACK;
