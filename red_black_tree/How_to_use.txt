@@ -1,0 +1,65 @@
+To use this Red-Black tree, you should have the following structures ready :
+
+1/ A container that can actually store your objects, with all the accompanying satellite data, uniquely indexable by a single 4 byte offset, eg - vectors or arrays. 
+2/ A class that inherits from the class 'Key' provided by the implementation and which overrides a function 'compare()'.
+
+For demonstration, assume you use a std::vector<int> as a container and a class like the following for comparison -
+
+////
+class Test_Sorted_Order_Key : public Key{
+        const std::vector<int>&         m_array; // A reference to your container of choice...
+        int                  		m_value;// Some value that you want to insert/remove/search, If you want to insert or remove, this value should already be present within your container.
+
+    public:
+        Test_Sorted_Order_Key(const std::vector<int>& arr, int value):m_array(arr), m_value(value){ // These two pieces of information define a 'Key'
+
+        }
+
+        RBStatus compare(const int cmp_ox) const{            // The Tree uses your comparison logic to decide to traverse 'left' or 'right'...
+                if(value < m_array[cmp_ox]){    // The passed argument is some existing offset into your container... RBTree calls your comparison function.
+                        return LESS;
+                }
+                else if(value > m_array[cmp_ox]){
+                        return MORE;
+                }
+                return EQUAL;
+        }
+};
+////
+
+Insertion :
+
+When you insert an object into the tree, you don't need to create a copy for the tree, since it does not store anything about the object apart from its index/offset into your container of choice. 
+////
+	std::vector<int> container(100);
+
+	int stored_at_offset = 0;
+	container[stored_at_offset] = 10;
+
+	RBTree rbt;  // Empty tree
+
+	Test_Sorted_Order_Key tst_key(container, 10); // Create Key representing to-be-inserted object
+
+	bool success = rbt.insert(tst_key, stored_at_offset); // Does insert. false means failure to insert uniquely.
+////
+
+Search :
+
+Use the same 'Key' to search as follows :
+////
+	
+	Test_Sorted_Order_Key tst_key(container, value); // Create Key representing to-be-searched object. 
+
+	int found_at_offset; // Will be populated if 'find' succeeds.
+	bool success = rbt.find(tst_key, found_at_offset); //  Searches and returns offset into your container(by reference) if found. Returns false if not found.
+////
+
+Removals :
+
+////
+	Test_Sorted_Order_Key tst_key(container, value); // Create Key representing to-be-removed object
+
+	bool success = rbt.remove(tst_key); //  Searches, removes if found, and returns true in success. Returns false if not found.
+////
+
+
