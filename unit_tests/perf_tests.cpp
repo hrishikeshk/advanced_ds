@@ -29,14 +29,14 @@ BOOST_AUTO_TEST_CASE( insert_1M_RBTree ){
 	std::vector<UInt32> array(size);
 	for(UInt32 i = 0; i < size; ++i){
 		array[i] = i;
-		Test_Sorted_Order_Key tk(array, i);
+		Test_Sorted_Order_Key tk(array, array[i] );
 
                 BOOST_REQUIRE(rbt.insert(tk, i) == true);
 	}
 
 	time_t t_insert = time(NULL);
 	for(UInt32 i = 0; i < size; ++i){
-		Test_Sorted_Order_Key tk(array, i);
+		Test_Sorted_Order_Key tk(array, array[i] );
 		UInt32 searched;
 
 		BOOST_REQUIRE(rbt.find(tk, searched) == true);
@@ -53,6 +53,7 @@ BOOST_AUTO_TEST_CASE( insert_1M_RBTree ){
 
 	BOOST_REQUIRE(find_time <= regression_limit_find);
 
+	std::cout << " ... done\n";
 }
 
 BOOST_AUTO_TEST_CASE( delete_1M_RBTree ){
@@ -67,14 +68,14 @@ BOOST_AUTO_TEST_CASE( delete_1M_RBTree ){
 	std::vector<UInt32> array(size);
 	for(UInt32 i = 0; i < size; ++i){
 		array[i] = i;
-		Test_Sorted_Order_Key tk(array, i);
+		Test_Sorted_Order_Key tk(array, array[i] );
 
                 BOOST_REQUIRE(rbt.insert(tk, i) == true);
 	}
 	time_t t_insert = time(NULL);
 
 	for(UInt32 i = 0; i < size; ++i){
-		Test_Sorted_Order_Key tk(array, i);
+		Test_Sorted_Order_Key tk(array, array[i] );
 
 		BOOST_REQUIRE(rbt.remove(tk) == true);
 	}
@@ -87,6 +88,7 @@ BOOST_AUTO_TEST_CASE( delete_1M_RBTree ){
 
 	BOOST_REQUIRE(remove_time <= regression_limit_remove);
 
+	std::cout << " ... done\n";
 }
 
 BOOST_AUTO_TEST_SUITE_END()

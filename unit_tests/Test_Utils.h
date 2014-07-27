@@ -1,7 +1,34 @@
 #ifndef _TEST_UTILS_
 #define _TEST_UTILS_
 
+#include <string>
 #include <vector>
+#include <string.h>
+
+class Compound_Test{
+	public:
+		std::string	m_name;
+		UInt32		m_age;
+
+	bool operator<(const Compound_Test& co){
+		int str_cmp = strcmp(m_name.c_str(), co.m_name.c_str());
+		if(str_cmp == 0 && m_age == co.m_age)
+			return false;
+		if(str_cmp < 0)
+			return false;
+		else if(str_cmp > 0)
+			return true;
+		else if(m_age < co.m_age)
+			return true;
+		return false;
+	}
+
+	bool operator>(const Compound_Test& co){
+		if( m_name == co.m_name && m_age == co.m_age)
+			return false;
+		return !(operator<(co));
+	}
+};
 
 void permute_and_call(  const std::vector<UInt32>& original, 
 			std::vector<UInt32>& target, 

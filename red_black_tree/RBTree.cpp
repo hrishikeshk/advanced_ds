@@ -41,10 +41,10 @@ Bool RBTree::find_detailed(const Key& k, UInt32& ref, UInt32& pos) const{
         if(m_root == m_nil)
                 return false;
 
-        UInt32 exp = m_nodes[m_root].m_payload;
-        RBStatus rs = k.compare(exp);
-
         pos = m_root;
+
+        UInt32 exp = m_nodes[pos].m_payload;
+        RBStatus rs = k.compare(exp);
 
         while(rs != EQUAL){
                 if(rs == LESS){
@@ -61,7 +61,7 @@ Bool RBTree::find_detailed(const Key& k, UInt32& ref, UInt32& pos) const{
         return true;
 }
 
-Bool RBTree::insert(const Key& k, const UInt32 ref){
+Bool RBTree::insert(const Key& k, UInt32 offset){
 
 	RBNode new_node;
 	UInt32 lead = m_root;
@@ -79,7 +79,8 @@ Bool RBTree::insert(const Key& k, const UInt32 ref){
 			return false; // Already inserted, return failure to uniquely insert.
 		}
 	}
-	new_node.m_payload = ref;
+	new_node.m_payload = offset; // This is the offset into the external container where the element is already stored...
+
 	UInt32 new_node_offset;
 	if(m_first_free != maxUInt32){
 		new_node_offset = m_first_free;

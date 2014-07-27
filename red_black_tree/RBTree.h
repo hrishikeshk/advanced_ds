@@ -18,13 +18,13 @@ class RBTree{
 	
 	RBTree();
 
-	Bool insert(const Key& k, const UInt32 ref);
+	Bool insert(const Key& k, UInt32 offset); // Create Key that has your inserted value, and pass the offset at which you added it in your container...
 
-	Bool find(const Key& k, UInt32& ref) const;
+	Bool find(const Key& k, UInt32& ref) const; // Find the offset 'ref' within your container, where the value within the Key is stored ... Fast ...
 
-	Bool remove(const Key& k);
+	Bool remove(const Key& k); // Remove the value within the Key from the Index ...
 
-	void traverse_inorder(std::vector<UInt32>& o_contents);
+	void traverse_inorder(std::vector<UInt32>& o_contents); // Gets you a list of offsets into your container such that they are ordered ...
 
 	private:
 

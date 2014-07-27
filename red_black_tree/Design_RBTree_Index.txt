@@ -1,12 +1,15 @@
 TODO :
 1/ Move free list offsets list to Tree, out of RBNode
-2/ UTs
-3/ Benchmarks, comparisons
-4/ Sample usage and documentation.
-5/ Use sentinel based flow for NIL leaves
+2/ UTs - -> Done
+3/ Benchmarks, comparisons - Performance Benchmarks set using automated tests.
+-> Done
+4/ Sample usage and documentation. -> Done
+5/ Use sentinel based flow for NIL leaves. -> Done
 6/ Make free list build time option
 7/ Use AutoConf
-
+8/ Create a companion container structure so that objects may be deleted from
+the container too, and equipped with a free-list of deleted nodes that can be
+re-used.
 
 PURPOSE :
 
@@ -22,7 +25,7 @@ parent and child nodes instead of pointers. Also, only 4 byte offsets that
 reference objects in a list are stored in the index and satellite data for
 the objects is neither stored nor copied. 
 
-The way to use this index is as follows:
+The way to use this index is as follows: 
 
 1/ Create your own list of objects, that includes all satellite data that you
 need to store along with some indentifying (key) attribute of those objects.
@@ -39,10 +42,12 @@ saving each one at some offset in your list.
 4/ To search for objects, create an object of sub-type of 'Key' and use the
 RBTree interface to locate the offset of the object in your list.
 
+5/ Follow an example usage in How_to_use.txt or read through the usage in unit tests.
+
 Dependencies :
-	1/ It is optional to use std::vector<> available with the Boost Library. Standard Library vector can be used too without side effects.
+	1/ It is optional to use std::vector<> available with the Boost Library. Standard Library vector can be used too without side effects. Note that the objects can be deleted from the Tree but the container cannot be modified in any way that alters the offsets of remnant elements.
 	2/ Tested on CentOS Linux 64-bit OS, gcc 4.4.7, but this should work
-	3/ Requires Boost library ver 1.41.0
+	3/ Requires Boost library ver 1.41.0 (For building unit tests only).
 elsewhere.
 
 
@@ -74,7 +79,8 @@ corresponding RBNode object is added to a 'free list' of such nodes. On the
 next inserts, the vector will not be grown, but instead the free list will be
 utilized. Once a node is inserted in the vector of RBNodes, it will never be
 deleted, though, keeping with the assumption of future re-use and striving for
-good amortized response.
+good amortized response. This should also reduce frequent memory allocations
+and freeing and result in compact memory accesses. Good for cache hits.
 
 
 Dynamic Data Model :
@@ -104,6 +110,9 @@ objects into the tree to test insertion and then deletion again in permutation. 
 	The insertion and deletion steps should then happen for 
 interleavings between insert and delete operations. 
 
-Benchmarks : TODO
+Benchmarks : Tests for inserting, finding and removing 1 million data values
+is done. Current benchmarks are recorded for checking and avoiding future
+performance regressions as automated tests.
+
 
 
