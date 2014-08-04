@@ -1,0 +1,7 @@
+To Build : export one environment flag 'SRC_DIR' to the base of the project (<abs_path>/advanced_ds).
+
+Implemented here is a bloom filter, a probabilistic structure based on hashing. According to Broder-Mitzenmacher[1], bloom filter is a candidate when you need a space efficient search data-structure with which you can tolerate a certain upper bound on the probability of false positives.
+
+
+[1] - Broder-Mitzenmacher - Network applications of bloom filters, a survey.
+
