@@ -15,13 +15,16 @@ BitMap::~BitMap(){
 
 Bool BitMap::mark(UInt32 offset){
 
+	return false;
 }
 
 Bool BitMap::is_marked(UInt32 offset) const{
 
+	return false;
 }
 
 Bool BitMap::unmark(UInt32 offset){
 
+	return false;
 }
 
