@@ -21,7 +21,6 @@ class BitMap{
 	Bool unmark(UInt32 offset); // No issues if the offset is already unmarked
 
 	private:
-
 		UInt32 m_bytes;
 
 		UInt8*	m_buffer;
