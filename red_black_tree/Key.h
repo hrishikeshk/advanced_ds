@@ -3,7 +3,7 @@
 
 #include "TypeDefs.h"
 
-enum RBStatus { LESS, EQUAL, MORE };
+enum class RBStatus : char { LESS, EQUAL, MORE };
 
 class Key{
 	public:

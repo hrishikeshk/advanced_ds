@@ -4,7 +4,7 @@ WARN=-Wall
 
 DEBUG=-g -ggdb
 
-CC=g++
+CC=/opt/rh/devtoolset-2/root/usr/bin/g++
 
 SHAREDLIB_FLAGS=-shared -fPIC
 
@@ -12,4 +12,4 @@ FPIC_OBJ=-fPIC
 
 INCLUDES=-I $(SRC_DIR)
 
-OPTIONS=-D _DEBUG_BUILD_
+OPTIONS=-D _DEBUG_BUILD_ --std=c++0x

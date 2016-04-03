@@ -4,8 +4,6 @@ include $(SRC_DIR)/OptMake
 
 TST_INCLUDES=-I $(SRC_DIR)/red_black_tree -I $(SRC_DIR)/bloom_filter -I $(SRC_DIR)/unit_tests
 
-TST_LIBS=-L $(SRC_DIR)/red_black_tree -L $(SRC_DIR)/bloom_filter
-
 simple_tests.o: simple_tests.cpp Test_Key.h Test_Utils.h
 	$(CC) $(OPTIONS)  $(WARN) $(DEBUG) $(FPIC_OBJ) $(INCLUDES) $(RB_INCLUDES) $(TST_INCLUDES) -o simple_tests.o -c simple_tests.cpp
 

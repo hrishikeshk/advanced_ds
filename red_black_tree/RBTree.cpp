@@ -8,7 +8,7 @@
 
 RBTree::RBTree():m_root(m_nil), m_first_free(maxUInt32){
 	RBNode nil_node; // Sentinel
-	nil_node.m_color = BLACK;
+	nil_node.m_color = Color::BLACK;
 	m_nodes.push_back(nil_node);
 }
 
@@ -46,8 +46,8 @@ Bool RBTree::find_detailed(const Key& k, UInt32& ref, UInt32& pos) const{
         UInt32 exp = m_nodes[pos].m_payload;
         RBStatus rs = k.compare(exp);
 
-        while(rs != EQUAL){
-                if(rs == LESS){
+        while(rs != RBStatus::EQUAL){
+                if(rs == RBStatus::LESS){
                         pos = m_nodes[pos].m_left;
                 }
                 else{
@@ -65,14 +65,14 @@ Bool RBTree::insert(const Key& k, UInt32 offset){
 
 	RBNode new_node;
 	UInt32 lead = m_root;
-	RBStatus rs = EQUAL;
+	RBStatus rs = RBStatus::EQUAL;
 	while(lead != m_nil){
 		new_node.m_parent = lead;
 		rs = k.compare(m_nodes[lead].m_payload);
-		if(rs == LESS){
+		if(rs == RBStatus::LESS){
 			lead = m_nodes[lead].m_left;
 		}
-		else if(rs == MORE){
+		else if(rs == RBStatus::MORE){
 			lead = m_nodes[lead].m_right;
 		}
 		else{
@@ -91,12 +91,12 @@ Bool RBTree::insert(const Key& k, UInt32 offset){
 		new_node_offset = m_nodes.size();
 		m_nodes.push_back(new_node);
 	}
-	if(rs == MORE){
+	if(rs == RBStatus::MORE){
 		v_assert(m_nodes[new_node.m_parent].m_right == m_nil, "Incorrect child links in the parent to which insertion is being done");
 		if(new_node.m_parent != m_nil)
 			m_nodes[new_node.m_parent].m_right = new_node_offset;
 	}
-	else if(rs == LESS){
+	else if(rs == RBStatus::LESS){
 		v_assert(m_nodes[new_node.m_parent].m_left == m_nil, "Incorrect child links in the parent to which insertion is being done");
 		if(new_node.m_parent != m_nil)
 			m_nodes[new_node.m_parent].m_left = new_node_offset;
@@ -113,15 +113,15 @@ void RBTree::rb_insert_fixup(const UInt32& new_node){
 	UInt32 curr_node = new_node;
 	UInt32 par = m_nodes[curr_node].m_parent;
 
-	while(m_nodes[par].m_color == RED){
+	while(m_nodes[par].m_color == Color::RED){
 		UInt32 gpar = m_nodes[par].m_parent;
 		UInt32 uncle;
 		if(par == m_nodes[gpar].m_left){
 			uncle = m_nodes[gpar].m_right;
-			if(m_nodes[uncle].m_color == RED){
-				m_nodes[par].m_color = BLACK;
-				m_nodes[uncle].m_color = BLACK;
-				m_nodes[gpar].m_color = RED;
+			if(m_nodes[uncle].m_color == Color::RED){
+				m_nodes[par].m_color = Color::BLACK;
+				m_nodes[uncle].m_color = Color::BLACK;
+				m_nodes[gpar].m_color = Color::RED;
 				curr_node = gpar;
 			}
 			else{
@@ -131,17 +131,17 @@ void RBTree::rb_insert_fixup(const UInt32& new_node){
 					par = m_nodes[curr_node].m_parent;
 					gpar = m_nodes[par].m_parent;
 				}
-				m_nodes[par].m_color = BLACK;
-				m_nodes[gpar].m_color = RED;
+				m_nodes[par].m_color = Color::BLACK;
+				m_nodes[gpar].m_color = Color::RED;
 				right_rotate(gpar);
 			}
 		}
 		else{
 			uncle = m_nodes[gpar].m_left;
-			if(m_nodes[uncle].m_color == RED){
-				m_nodes[par].m_color = BLACK;
-				m_nodes[uncle].m_color = BLACK;
-				m_nodes[gpar].m_color = RED;
+			if(m_nodes[uncle].m_color == Color::RED){
+				m_nodes[par].m_color = Color::BLACK;
+				m_nodes[uncle].m_color = Color::BLACK;
+				m_nodes[gpar].m_color = Color::RED;
 				curr_node = gpar;
 			}
 			else{
@@ -151,8 +151,8 @@ void RBTree::rb_insert_fixup(const UInt32& new_node){
 					par = m_nodes[curr_node].m_parent;
 					gpar = m_nodes[par].m_parent;
 				}
-				m_nodes[par].m_color = BLACK;
-				m_nodes[gpar].m_color = RED;
+				m_nodes[par].m_color = Color::BLACK;
+				m_nodes[gpar].m_color = Color::RED;
 				left_rotate(gpar);
 			}
 
@@ -160,7 +160,7 @@ void RBTree::rb_insert_fixup(const UInt32& new_node){
 		par = m_nodes[curr_node].m_parent;
 	}
 
-	m_nodes[m_root].m_color = BLACK;
+	m_nodes[m_root].m_color = Color::BLACK;
 }
 
 Bool RBTree::remove(const Key& k){
@@ -207,7 +207,7 @@ Bool RBTree::remove(const Key& k){
 	m_nodes[node_succ].m_next_free = m_first_free;
 	m_first_free = node_succ;
 
-	if(m_nodes[node_succ].m_color == BLACK){
+	if(m_nodes[node_succ].m_color == Color::BLACK){
 		rb_remove_fixup(child_succ);
 	}
 	return true;
@@ -215,64 +215,64 @@ Bool RBTree::remove(const Key& k){
 
 void RBTree::rb_remove_fixup(UInt32 child_successor){
 	UInt32 child_succ = child_successor;
-	while(child_succ != m_nil && child_succ != m_root && m_nodes[child_succ].m_color == BLACK){
+	while(child_succ != m_nil && child_succ != m_root && m_nodes[child_succ].m_color == Color::BLACK){
 		UInt32 par = m_nodes[child_succ].m_parent;
 		if(child_succ == m_nodes[par].m_left){
 			UInt32 sibling = m_nodes[par].m_right;
-			if(m_nodes[sibling].m_color == RED){
-				m_nodes[sibling].m_color = BLACK;
-				m_nodes[par].m_color = RED;
+			if(m_nodes[sibling].m_color == Color::RED){
+				m_nodes[sibling].m_color = Color::BLACK;
+				m_nodes[par].m_color = Color::RED;
 				left_rotate(par);
 				sibling = m_nodes[m_nodes[child_succ].m_parent].m_right;
 			}
 			UInt32 sibling_left = m_nodes[sibling].m_left;
 			UInt32 sibling_right = m_nodes[sibling].m_right;
-			if(m_nodes[sibling_left].m_color == BLACK && m_nodes[sibling_right].m_color == BLACK){
-				m_nodes[sibling].m_color = RED;
+			if(m_nodes[sibling_left].m_color == Color::BLACK && m_nodes[sibling_right].m_color == Color::BLACK){
+				m_nodes[sibling].m_color = Color::RED;
 				child_succ = m_nodes[child_succ].m_parent;
 			}
-			else if(m_nodes[sibling_right].m_color == BLACK){
-				m_nodes[sibling_left].m_color = BLACK;
-				m_nodes[sibling].m_color = RED;
+			else if(m_nodes[sibling_right].m_color == Color::BLACK){
+				m_nodes[sibling_left].m_color = Color::BLACK;
+				m_nodes[sibling].m_color = Color::RED;
 				right_rotate(sibling);
 				par = m_nodes[child_succ].m_parent;
 				sibling = m_nodes[par].m_right;
 			}
 			m_nodes[sibling].m_color = m_nodes[par].m_color;
-			m_nodes[par].m_color = BLACK;
-			m_nodes[m_nodes[sibling].m_right].m_color = BLACK;
+			m_nodes[par].m_color = Color::BLACK;
+			m_nodes[m_nodes[sibling].m_right].m_color = Color::BLACK;
 			left_rotate(par);
 			child_succ = m_root;
 		}
 		else{
 			UInt32 sibling = m_nodes[par].m_left;
-			if(m_nodes[sibling].m_color == RED){
-				m_nodes[sibling].m_color = BLACK;
-				m_nodes[par].m_color = RED;
+			if(m_nodes[sibling].m_color == Color::RED){
+				m_nodes[sibling].m_color = Color::BLACK;
+				m_nodes[par].m_color = Color::RED;
 				right_rotate(par);
 				sibling = m_nodes[m_nodes[child_succ].m_parent].m_left;
 			}
 			UInt32 sibling_left = m_nodes[sibling].m_left;
 			UInt32 sibling_right = m_nodes[sibling].m_right;
-			if(m_nodes[sibling_left].m_color == BLACK && m_nodes[sibling_right].m_color == BLACK){
-				m_nodes[sibling].m_color = RED;
+			if(m_nodes[sibling_left].m_color == Color::BLACK && m_nodes[sibling_right].m_color == Color::BLACK){
+				m_nodes[sibling].m_color = Color::RED;
 				child_succ = m_nodes[child_succ].m_parent;
 			}
-			else if(m_nodes[sibling_left].m_color == BLACK){
-				m_nodes[sibling_right].m_color = BLACK;
-				m_nodes[sibling].m_color = RED;
+			else if(m_nodes[sibling_left].m_color == Color::BLACK){
+				m_nodes[sibling_right].m_color = Color::BLACK;
+				m_nodes[sibling].m_color = Color::RED;
 				left_rotate(sibling);
 				par = m_nodes[child_succ].m_parent;
 				sibling = m_nodes[par].m_left;
 			}
 			m_nodes[sibling].m_color = m_nodes[par].m_color;
-			m_nodes[par].m_color = BLACK;
-			m_nodes[m_nodes[sibling].m_left].m_color = BLACK;
+			m_nodes[par].m_color = Color::BLACK;
+			m_nodes[m_nodes[sibling].m_left].m_color = Color::BLACK;
 			right_rotate(par);
 			child_succ = m_root;
 		}
 	}
-	m_nodes[child_succ].m_color = BLACK;
+	m_nodes[child_succ].m_color = Color::BLACK;
 }
 
 void RBTree::left_rotate(const UInt32& node){

@@ -14,7 +14,7 @@ using namespace boost::unit_test;
 
 void simple_ctor_RBNode(){
 	RBNode rbn;
-	BOOST_REQUIRE(rbn.m_color == RED);
+	BOOST_REQUIRE(rbn.m_color == Color::RED);
 }
 
 void simple_ctor_RBTree(){

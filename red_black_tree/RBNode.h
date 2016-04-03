@@ -4,7 +4,7 @@
 #include "TypeDefs.h"
 #include "Consts.h"
 
-enum Color { BLACK, RED };
+enum class Color : char { BLACK, RED };
 
 const UInt32 m_nil = 0;
 
@@ -17,7 +17,7 @@ struct RBNode{
 	UInt32 m_payload;
 	Color m_color;
 
-	RBNode():m_parent(m_nil), m_left(m_nil), m_right(m_nil), m_next_free(maxUInt32), m_payload(maxUInt32), m_color(RED){
+	RBNode():m_parent(m_nil), m_left(m_nil), m_right(m_nil), m_next_free(maxUInt32), m_payload(maxUInt32), m_color(Color::RED){
 	}
 };
 

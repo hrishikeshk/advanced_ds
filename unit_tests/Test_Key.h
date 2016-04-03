@@ -7,7 +7,7 @@
 class Test_Key : public Key{
 	public:
 	RBStatus compare(const UInt32 cmp_ox) const{
-		return EQUAL;
+		return RBStatus::EQUAL;
 	}
 };
 
@@ -19,12 +19,12 @@ class Test_Sorted_Order_Key : public Key{
 	}
 	RBStatus compare(const UInt32 cmp_ox) const{
 		if(m_value < m_array[cmp_ox]){
-			return LESS;
+			return RBStatus::LESS;
 		}
 		else if(m_value > m_array[cmp_ox]){
-			return MORE;
+			return RBStatus::MORE;
 		}
-		return EQUAL;
+		return RBStatus::EQUAL;
 	}
 };
 
@@ -37,12 +37,12 @@ class Test_Compound_Object_Key : public Key {
         }
         RBStatus compare(const UInt32 cmp_ox) const{
                 if(m_value < m_array[cmp_ox]){
-                        return LESS;
+                        return RBStatus::LESS;
                 }
                 else if(m_value > m_array[cmp_ox]){
-                        return MORE;
+                        return RBStatus::MORE;
                 }
-                return EQUAL;
+                return RBStatus::EQUAL;
         }
 };
 
