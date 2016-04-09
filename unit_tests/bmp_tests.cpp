@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <stdlib.h>
+#include <bitset>
 
 #include "BitMap.h"
 
@@ -146,6 +147,63 @@ BOOST_AUTO_TEST_CASE( insert_rand10_failure_RBTree ){
 BOOST_AUTO_TEST_CASE( perf_1_bmp ){
 	perf1bmp(0x1fffff);
 }
+
+
+void perf_compare_bs_bmp(){
+
+	double regression_limit_mark = 3.0;
+
+	constexpr unsigned int size_to_use = 0x1fffff;
+		try{
+			std::bitset<size_to_use * 8> bs(0);
+
+			std::cout << "Compare with std::bitset ! \n\nRunning Performance Test for all operations - # " << "1\n";
+
+			////
+			std::cout << "Trying marking .... with " << size_to_use * 8 << " marks\n";
+			time_t t_start = time(NULL);
+			for(UInt32 x = 0; x < size_to_use * 8; ++x){
+				bs[x] = true;
+			}
+			time_t t_mark = time(NULL);
+			std::cout << " Time for marking " << size_to_use * 8 << " data spots = " << difftime(t_mark, t_start) << " seconds\n";
+			BOOST_REQUIRE(regression_limit_mark >= difftime(t_mark, t_start) );
+
+			////
+			bool tmp;
+			std::cout << "Trying checking marks .... with " << size_to_use * 8 << " marks\n";
+			t_start = time(NULL);
+			for(UInt32 x = 0; x < size_to_use * 8; ++x){
+				tmp = bs[x];
+			}
+			t_mark = time(NULL);
+			std::cout << " Time for checking " << size_to_use * 8 << " data spots = " << difftime(t_mark, t_start) << " seconds..." << tmp << "\n";
+			BOOST_REQUIRE(regression_limit_mark >= difftime(t_mark, t_start) );
+
+			////
+			std::cout << "Trying un-marking .... with " << size_to_use * 8 << " marks\n";
+			t_start = time(NULL);
+			for(UInt32 x = 0; x < size_to_use * 8; ++x){
+				bs[x] = false;
+			}
+			t_mark = time(NULL);
+			std::cout << " Time for un-marking " << size_to_use * 8 << " data spots = " << difftime(t_mark, t_start) << " seconds\n";
+			BOOST_REQUIRE(regression_limit_mark >= difftime(t_mark, t_start) );
+		}
+		catch(std::bad_alloc ba){
+			throw ba;
+		}
+		catch(...){
+			BOOST_REQUIRE(false);
+		}
+
+	std::cout << " ... done\n";
+}
+
+BOOST_AUTO_TEST_CASE( perf_2_bmp ){
+	perf_compare_bs_bmp();
+}
+
 
 BOOST_AUTO_TEST_SUITE_END()
 
