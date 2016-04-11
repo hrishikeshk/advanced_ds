@@ -5,6 +5,7 @@
 #include <vector>
 #include <time.h>
 
+#include <map>
 
 #include "RBNode.h"
 #include "RBTree.h"
@@ -56,8 +57,46 @@ BOOST_AUTO_TEST_CASE( insert_1M_RBTree ){
 	std::cout << " ... done\n";
 }
 
-BOOST_AUTO_TEST_CASE( delete_1M_RBTree ){
+BOOST_AUTO_TEST_CASE( insert_1M_StdMap ){
 	std::cout << "Running Test # " << "2\n";
+
+	double regression_limit_insert = 5.0;
+	double regression_limit_find = 3.0;
+
+	std::map<unsigned int, unsigned int> rbt;
+
+	time_t t_start = time(NULL);
+
+	UInt32 size = 1000000;
+	std::vector<UInt32> array(size);
+	for(UInt32 i = 0; i < size; ++i){
+		array[i] = i;
+
+                rbt.insert(std::make_pair<int, int>(i, i));
+	}
+
+	time_t t_insert = time(NULL);
+	for(UInt32 i = 0; i < size; ++i){
+
+		BOOST_REQUIRE(rbt[i] == i);
+	}
+
+	double insert_time = difftime(t_insert, t_start); 
+	std::cout << " Time for Insertion 1 M data = " << insert_time << " seconds\n";
+
+	BOOST_REQUIRE(insert_time <= regression_limit_insert);
+
+	time_t t_search = time(NULL);
+	double find_time = difftime(t_search, t_insert);
+	std::cout << " Time for Finding 1 M data = " << find_time << " seconds\n";
+
+	BOOST_REQUIRE(find_time <= regression_limit_find);
+
+	std::cout << " ... done\n";
+}
+
+BOOST_AUTO_TEST_CASE( delete_1M_RBTree ){
+	std::cout << "Running Test # " << "3\n";
 
 	double regression_limit_remove = 5.0;
 
