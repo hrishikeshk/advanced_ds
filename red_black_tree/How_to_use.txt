@@ -62,4 +62,11 @@ Removals :
 	bool success = rbt.remove(tst_key); //  Searches, removes if found, and returns true in success. Returns false if not found.
 ////
 
+Augmentation :
 
+	The core RBTree logic can be extended to augmenting some additional information with each node. Further, the additional information does not need to be with the end user, the RB tree can allocate for it and maintain it.
+Simply instantiate the tree by a template alias,
+		using CounterRBTree = AugRBTree<AugmentCount>
+
+
+////

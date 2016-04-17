@@ -4,6 +4,8 @@
 #include "TypeDefs.h"
 #include "Consts.h"
 
+enum Operation {FIND = 0, INSERT, REMOVE, LEFT_ROTATE, RIGHT_ROTATE};
+
 enum class Color : char { BLACK, RED };
 
 const UInt32 m_nil = 0;

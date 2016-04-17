@@ -13,7 +13,37 @@
 #include "Augment.h"
 #include "Dependent_Includes.h"
 
-enum class Operation : char {FIND, INSERT, REMOVE};
+namespace Func_RBTree{
+
+	template<size_t n, typename... Others>
+	class ApplyFuncToTuple{
+		public:
+		void apply(Operation op, 
+			   std::tuple<Others...>& tup, 
+			   UInt32 pos,
+			   UInt32 root,
+			   std::function<RBNode(UInt32)> accessor_func){
+
+			std::get<n>(tup).fix(op, pos, root, accessor_func);
+			ApplyFuncToTuple<n - 1, Others...> af;
+			af.apply(op, tup, pos, root, accessor_func);
+		}
+	};
+
+	template<typename... Others>
+	class ApplyFuncToTuple<0, Others...>{
+		public:
+		void apply(Operation op, 
+			   std::tuple<Others...>& tup, 
+			   UInt32 pos,
+			   UInt32 root,
+			   std::function<RBNode(UInt32)> accessor_func){
+
+			std::get<0>(tup).fix(op, pos, root, accessor_func);
+		}
+	};
+}
+
 template<typename... Others>
 class AugRBTree{
 
@@ -28,7 +58,7 @@ class AugRBTree{
 
         Bool insert(const Key& k, UInt32 offset); // Create Key that has your inserted value, and pass the offset at which you added it in your container...
 
-        Bool find(const Key& k, UInt32& ref) const; // Find the offset 'ref' within your container, where the value within the Key is stored ... Fast ...
+        Bool find(const Key& k, UInt32& ref); // Find the offset 'ref' within your container, where the value within the Key is stored ... Fast ...
 
         Bool remove(const Key& k); // Remove the value within the Key from the Index ...
 
@@ -51,7 +81,7 @@ class AugRBTree{
 
         void inorder(UInt32 root, std::vector<UInt32>& o_contents);
 
-	Bool find_detailed(const Key& k, UInt32& ref, UInt32& pos, Operation op) const;
+	Bool find_detailed(const Key& k, UInt32& ref, UInt32& pos, Operation op);
 };
 
 
@@ -83,13 +113,13 @@ void AugRBTree<Others...>::inorder(UInt32 root, std::vector<UInt32>& o_contents)
 }
 
 template<typename... Others>
-Bool AugRBTree<Others...>::find(const Key& k, UInt32& ref) const{
+Bool AugRBTree<Others...>::find(const Key& k, UInt32& ref){
 	UInt32 pos;
-	return find_detailed(k, ref, pos, Operation::FIND);
+	return find_detailed(k, ref, pos, FIND);
 }
 
 template<typename... Others>
-Bool AugRBTree<Others...>::find_detailed(const Key& k, UInt32& ref, UInt32& pos, Operation op) const{
+Bool AugRBTree<Others...>::find_detailed(const Key& k, UInt32& ref, UInt32& pos, Operation op){
 
 	ref = m_nil;
         if(m_root == m_nil)
@@ -101,7 +131,7 @@ Bool AugRBTree<Others...>::find_detailed(const Key& k, UInt32& ref, UInt32& pos,
         RBStatus rs = k.compare(exp);
 
         while(rs != RBStatus::EQUAL){
-		
+
                 if(rs == RBStatus::LESS){
                         pos = m_nodes[pos].m_left;
                 }
@@ -112,6 +142,7 @@ Bool AugRBTree<Others...>::find_detailed(const Key& k, UInt32& ref, UInt32& pos,
                         return false;
                 rs = k.compare(m_nodes[pos].m_payload);
         }
+
         ref = m_nodes[pos].m_payload;
         return true;
 }
@@ -135,6 +166,7 @@ Bool AugRBTree<Others...>::insert(const Key& k, UInt32 offset){
 			return false; // Already inserted, return failure to uniquely insert.
 		}
 	}
+
 	new_node.m_payload = offset; // This is the offset into the external container where the element is already stored...
 
 	UInt32 new_node_offset;
@@ -160,6 +192,18 @@ Bool AugRBTree<Others...>::insert(const Key& k, UInt32 offset){
 	if(m_root == m_nil){
 		m_root = new_node_offset;
 	}
+
+	Func_RBTree::ApplyFuncToTuple<sizeof...(Others) - 1, Others...> af;
+	std::vector<RBNode>* p_nodes = &m_nodes;
+
+	af.apply(INSERT,
+		 m_tuple,
+		 new_node_offset,
+		 m_root,
+		 [p_nodes](UInt32 offset){ return (*p_nodes)[offset]; }
+	);
+	// Severe perf regression found after this addition. TODO fix...
+
 	rb_insert_fixup(new_node_offset);
 	return true;
 }
@@ -224,7 +268,7 @@ template<typename... Others>
 Bool AugRBTree<Others...>::remove(const Key& k){
 
 	UInt32 del_node, ref;
-	Bool ret = find_detailed(k, ref, del_node, Operation::REMOVE);
+	Bool ret = find_detailed(k, ref, del_node, REMOVE);
 	if(ret == false || del_node == m_nil)
 		return false;
 
@@ -238,6 +282,17 @@ Bool AugRBTree<Others...>::remove(const Key& k){
 		node_succ = tree_successor(del_node);
 	}
 	v_assert(node_succ != m_nil, "Delete : Unexpected : node_succ offset is NIL");
+
+	Func_RBTree::ApplyFuncToTuple<sizeof...(Others) - 1, Others...> af;
+	std::vector<RBNode>* p_nodes = &m_nodes;
+
+	af.apply(REMOVE,
+		 m_tuple,
+		 node_succ,
+		 m_root,
+		 [p_nodes](UInt32 offset){ return (*p_nodes)[offset]; }
+	);
+	// Severe perf regression found after this addition. TODO fix...
 
 	if(m_nodes[node_succ].m_left != m_nil){
 		child_succ = m_nodes[node_succ].m_left;
@@ -342,6 +397,18 @@ void AugRBTree<Others...>::left_rotate(const UInt32& node){
 	UInt32 right_curr = m_nodes[node].m_right;
 	if(right_curr == m_nil)
 		return;
+
+	Func_RBTree::ApplyFuncToTuple<sizeof...(Others) - 1, Others...> af;
+	std::vector<RBNode>* p_nodes = &m_nodes;
+
+	af.apply(LEFT_ROTATE,
+		 m_tuple,
+		 node,
+		 m_root,
+		 [p_nodes](UInt32 offset){ return (*p_nodes)[offset]; }
+	);
+	// Severe perf regression found after this addition. TODO fix...
+
 	m_nodes[node].m_right = m_nodes[right_curr].m_left;
 
 	UInt32 left_right_curr = m_nodes[right_curr].m_left;
@@ -373,6 +440,18 @@ void AugRBTree<Others...>::right_rotate(const UInt32& node){
 	UInt32 left_curr = m_nodes[node].m_left;
 	if(left_curr == m_nil)
 		return;
+
+	Func_RBTree::ApplyFuncToTuple<sizeof...(Others) - 1, Others...> af;
+	std::vector<RBNode>* p_nodes = &m_nodes;
+
+	af.apply(RIGHT_ROTATE,
+		 m_tuple,
+		 node,
+		 m_root,
+		 [p_nodes](UInt32 offset){ return (*p_nodes)[offset]; }
+	);
+	// Severe perf regression found after this addition. TODO fix...
+
 	m_nodes[node].m_left = m_nodes[left_curr].m_right;
 
 	UInt32 right_left_curr = m_nodes[left_curr].m_right;
@@ -409,7 +488,8 @@ UInt32 AugRBTree<Others...>::tree_successor(const UInt32& node) const{
 			next = m_nodes[candidate].m_left;
 		}
 	}
-	else{
+	else{ // Should never hit this in case of this limited RBTree usage ....
+		v_assert(false, "Unexpected usage or context for tree_successor() ... ");
 		UInt32 curr_node = node;
 		candidate = m_nodes[curr_node].m_parent;
 		while(candidate != m_nil){
@@ -424,6 +504,7 @@ UInt32 AugRBTree<Others...>::tree_successor(const UInt32& node) const{
 }
 
 using RBTree = AugRBTree<NullAugType>;
+//using RBTree = AugRBTree<AugmentCount>;
 
 #endif
 

@@ -16,6 +16,7 @@ Bool v_assert(Bool val, const std::string& mesg){
 	if(val == false){
 		std::cerr << "*********** \n FATAL problem detected\n ***********\n";
 		std::cerr << mesg << "\n";
+		//throw mesg;
 	}
 #endif
 	return val;

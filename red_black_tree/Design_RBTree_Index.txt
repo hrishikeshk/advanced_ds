@@ -10,6 +10,8 @@ TODO :
 8/ Create a companion container structure so that objects may be deleted from
 the container too, and equipped with a free-list of deleted nodes that can be
 re-used.
+9/ Augmentation enabled trees -> Done implementing a child counter with each node. 
+I can allow multiple such augmentations independently of each other - sort of attaching policies to a given core balanced tree implementation. The end user can choose such policies simply by instantiating thr RB Tree template appropriately.
 
 PURPOSE :
 
