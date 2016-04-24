@@ -3,7 +3,7 @@
 
 #include "TypeDefs.h"
 
-UInt32 maxUInt32 = 0x7fffffff;
+extern UInt32 maxUInt32;
 
 #endif
 

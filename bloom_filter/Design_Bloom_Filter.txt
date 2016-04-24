@@ -4,7 +4,7 @@ Introduction :
 
 Dependencies :
 	1/ It is optional to use std::vector<> available with the Boost Library. Standard Library vector can be used too without side effects. Note that the objects can be deleted from the Tree but the container cannot be modified in any way that alters the offsets of remnant elements.
-	2/ Tested on CentOS Linux 64-bit OS, gcc 4.4.7, but this should work
+	2/ Tested on CentOS Linux 64-bit OS, gcc 4.4.7, gcc 4.8.1, but this should work
 elsewhere
 	3/ Requires Boost library ver 1.41.0 (For building unit tests only).
 
@@ -13,10 +13,33 @@ Public Interfaces :
 Static Data Model :
 
 Dynamic Data Model :
+[1] Uses the FNV-1a hash for simplicity and speed. 
+{
+FNV offset basis = 14695981039346656037
+FNV prime = 1099511628211
+
+hash = FNV_offset_basis
+for each byte of data to be hashed
+	hash = hash XOR byte_of_data
+	hash = hash * FNV_prime
+
+return hash;
+}
+
+for eack of the M hash functions,(re-use FNV computed hash)
+{
+	index = (h[m % 2] + m * h[2 + (((m + m % 2) %4) /2 ]) % size
+}
+
+Using 64 bit unsigned numbers and splitting lower and upper 32 bit portions to gain two hashes at once.
+
 
 Unit Tests :
 
 Benchmarks : TODO
 
 
+
+References:
+[1] http://willwhim.wpengine.com/2011/09/03/producing-n-hash-functions-by-hashing-only-once/
 

@@ -19,10 +19,6 @@ class NullAugType{
 
 class AugmentCount{
 	std::vector<UInt32> m_child_counts;
-	public:
-	    AugmentCount(){
-		m_child_counts.push_back(m_nil);
-	    }
 	    // Ordering as per Operations for avoiding a conditional dispatch of each functions...
             std::function<void(UInt32, UInt32, std::function<RBNode(UInt32)>)> func_array[5] = {
 		[this](UInt32 pos, UInt32 root, std::function<RBNode(UInt32)> accessor_func){ // FIND
@@ -99,13 +95,26 @@ class AugmentCount{
 		}
 	     };
 
-		void fix(Operation op, 
-			 UInt32 pos, 
-			 UInt32 root, 
-			 std::function<RBNode(UInt32)>& accessor_func){
+	public:
+	    AugmentCount(){
+		m_child_counts.push_back(m_nil);
+	    }
+	    
+	    AugmentCount(AugmentCount&) = delete;
+	    AugmentCount& operator=(const AugmentCount&) = delete;
 
-			func_array[op](pos, root, accessor_func); // Avoided any conditions...
-		}
+	    void fix(Operation op, 
+		 UInt32 pos, 
+		 UInt32 root, 
+		 std::function<RBNode(UInt32)>& accessor_func){
+
+		 func_array[op](pos, root, accessor_func); // Avoided any conditions...
+	    }
+
+	    UInt32 aug_val_at(UInt32 offset){
+		v_assert(offset < m_child_counts.size(), "Out-of-bounds access for fetching subtree size at some position");
+		return m_child_counts[offset];
+	    }
 };
 
 #endif

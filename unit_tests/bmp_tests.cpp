@@ -177,7 +177,8 @@ void perf_compare_bs_bmp(){
 				tmp = bs[x];
 			}
 			t_mark = time(NULL);
-			std::cout << " Time for checking " << size_to_use * 8 << " data spots = " << difftime(t_mark, t_start) << " seconds..." << tmp << "\n";
+			std::cout << "Value set as " << tmp << "\n";
+			std::cout << " Time for checking " << size_to_use * 8 << " data spots = " << difftime(t_mark, t_start) << " seconds...\n";
 			BOOST_REQUIRE(regression_limit_mark >= difftime(t_mark, t_start) );
 
 			////

@@ -1,7 +1,7 @@
 #include <string.h>
+
 #include "TypeDefs.h"
 #include "Consts.h"
-
 #include "Common_Funcs.h"
 
 #include "BitMap.h"
