@@ -67,6 +67,11 @@ class AugRBTree{
         AugRBTree(const AugRBTree&) = delete;
         AugRBTree& operator=(const AugRBTree&) = delete;
 
+	template<UInt32 ta, typename Index>
+	auto augment_accessor(Index i){
+		return std::get<ta>(m_tuple).aug_val_at(i);
+	}
+
         private:
 
         void rb_insert_fixup(const UInt32& new_node);

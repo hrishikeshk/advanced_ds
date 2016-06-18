@@ -100,8 +100,8 @@ class AugmentCount{
 		m_child_counts.push_back(m_nil);
 	    }
 	    
-	    AugmentCount(AugmentCount&) = delete;
-	    AugmentCount& operator=(const AugmentCount&) = delete;
+	   // AugmentCount(AugmentCount&) = delete;
+	   // AugmentCount& operator=(const AugmentCount&) = delete;
 
 	    void fix(Operation op, 
 		 UInt32 pos, 
