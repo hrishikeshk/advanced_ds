@@ -29,8 +29,8 @@ void simple_ctor_CounterRBTree(){
 void simple_insert_CounterRBTree(){
 	CounterRBTree rbt;
 	std::vector<UInt32> array(1);
-	array[0] = 2;
-	Test_Sorted_Order_Key tk(array, 2);
+	array[0] = 3;
+	Test_Sorted_Order_Key tk(array, 3);
 
 	BOOST_REQUIRE(rbt.insert(tk, 0) == true);
 
@@ -38,6 +38,8 @@ void simple_insert_CounterRBTree(){
 	BOOST_REQUIRE(rbt.find(tk, searched) == true);
 
 	BOOST_REQUIRE(searched == 0);
+
+        BOOST_REQUIRE(rbt.find_with_aug<0>(tk, searched) == 0);
 }
 
 void multi_insert_CounterRBTree(){

@@ -28,6 +28,16 @@ namespace Func_RBTree{
 			ApplyFuncToTuple<n - 1, Others...> af;
 			af.apply(op, tup, pos, root, accessor_func);
 		}
+                Bool validate(std::tuple<Others...>& tup,
+                              UInt32 pos,
+                              UInt32 root,
+                              std::function<RBNode(UInt32)> accessor_func){
+                        Bool res = std::get<n>(tup).validate(pos, root, accessor_func);
+                        if(!res)
+                            return res;
+                        ApplyFuncToTuple<n - 1, Others...> af;
+                        return af.validate(tup, pos, root, accessor_func);
+                }
 	};
 
 	template<typename... Others>
@@ -41,6 +51,13 @@ namespace Func_RBTree{
 
 			std::get<0>(tup).fix(op, pos, root, accessor_func);
 		}
+                Bool validate(std::tuple<Others...>& tup,
+                              UInt32 pos,
+                              UInt32 root,
+                              std::function<RBNode(UInt32)> accessor_func){
+
+                        return std::get<0>(tup).validate(pos, root, accessor_func);
+                }
 	};
 }
 
@@ -67,10 +84,17 @@ class AugRBTree{
         AugRBTree(const AugRBTree&) = delete;
         AugRBTree& operator=(const AugRBTree&) = delete;
 
-	template<UInt32 ta, typename Index>
-	auto augment_accessor(Index i){
+	template<UInt32 ta>
+	auto augment_accessor(UInt32 i){
 		return std::get<ta>(m_tuple).aug_val_at(i);
 	}
+
+        template<UInt32 ta>
+        auto find_with_aug(const Key& k, UInt32& ref){
+            UInt32 pos;
+            find_detailed(k, ref, pos, FIND);
+            return std::get<ta>(m_tuple).aug_val_at(pos);
+        }
 
         private:
 
@@ -112,6 +136,18 @@ void AugRBTree<Others...>::inorder(UInt32 root, std::vector<UInt32>& o_contents)
 		inorder(m_nodes[root].m_left, o_contents);
 
 		o_contents.push_back(m_nodes[root].m_payload);
+
+	        Func_RBTree::ApplyFuncToTuple<sizeof...(Others) - 1, Others...> af;
+	        std::vector<RBNode>* p_nodes = &m_nodes;
+
+	        Bool res = af.validate(
+		    m_tuple,
+		    root,
+		    m_root,
+		    [p_nodes](UInt32 offset){ return (*p_nodes)[offset]; }
+	        );
+                if(!res)
+                    return;
 
 		inorder(m_nodes[root].m_right, o_contents);
 	}
