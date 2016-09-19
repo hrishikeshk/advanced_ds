@@ -5,7 +5,8 @@
 
 #include "BloomFilter.h"
 
-BloomFilter::BloomFilter(UInt32 size_in_bytes, UInt8 num_hashes): m_bm(size_in_bytes), m_k(num_hashes){
+BloomFilter::BloomFilter(UInt32 size_in_bytes, UInt8 num_hashes): m_k(num_hashes){
+	m_bm.resize(size_in_bytes);
 }
 
 BloomFilter::~BloomFilter(){

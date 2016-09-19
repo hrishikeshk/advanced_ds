@@ -10,8 +10,11 @@ class BitMap{
 
 	public:
 	
+	BitMap();
 	BitMap(UInt32 size_in_bytes);
 	~BitMap();
+
+	Bool resize(UInt32 size_in_bytes);
 
 	Bool mark(UInt32 offset); // This offset will be marked, it should be within range of the map size
 	Bool is_marked(UInt32 offset) const; // Simple read-only check 

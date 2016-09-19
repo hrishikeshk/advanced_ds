@@ -21,6 +21,18 @@ void simple_ctor_bmp(){
 	}
 }
 
+void resize_ctor_bmp(){
+	for(UInt32 i = 0; i <= 10; ++i){
+		try{
+			BitMap bmp;
+			bmp.resize(i);
+		}
+		catch(std::bad_alloc ba){
+			BOOST_REQUIRE(false);
+		}
+	}
+}
+
 void simple_usage_bmp(){
 	BitMap bmp(10);
 
@@ -32,6 +44,25 @@ void simple_usage_bmp(){
 	for(UInt32 x = 0; x < 10 * 8; ++x){
 		BOOST_REQUIRE(bmp.is_marked(x) == true);
 		BOOST_REQUIRE(bmp.unmark(x) == true);
+		BOOST_REQUIRE(bmp.is_marked(x) == false);
+	}
+}
+
+void resize_usage_bmp(){
+	BitMap bmp(10);
+
+	for(UInt32 x = 0; x < 10 * 8; ++x){
+		BOOST_REQUIRE(bmp.is_marked(x) == false);
+		BOOST_REQUIRE(bmp.mark(x) == true);
+		BOOST_REQUIRE(bmp.is_marked(x) == true);
+	}
+
+	bmp.resize(15);
+	
+	for(UInt32 x = 0; x < 10 * 8; ++x){
+		BOOST_REQUIRE(bmp.is_marked(x) == true);
+	}
+	for(UInt32 x = 10 * 8; x < 15 * 8; ++x){
 		BOOST_REQUIRE(bmp.is_marked(x) == false);
 	}
 }
@@ -138,9 +169,21 @@ BOOST_AUTO_TEST_CASE( use_rand10_BMP ){
 	std::cout << " ... done\n";
 }
 
-BOOST_AUTO_TEST_CASE( insert_rand10_failure_RBTree ){
+BOOST_AUTO_TEST_CASE( unset_10_BMP ){
 	std::cout << "Running Test # " << "4\n";
 	np_check_bmp();
+	std::cout << " ... done\n";
+}
+
+BOOST_AUTO_TEST_CASE( rs_ctor_BMP ){
+	std::cout << "Running Test # " << "5\n";
+	resize_ctor_bmp();
+	std::cout << " ... done\n";
+}
+
+BOOST_AUTO_TEST_CASE( rs_insert_10_BMP ){
+	std::cout << "Running Test # " << "6\n";
+	resize_usage_bmp();
 	std::cout << " ... done\n";
 }
 

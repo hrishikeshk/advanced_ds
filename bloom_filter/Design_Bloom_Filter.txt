@@ -1,6 +1,7 @@
 PURPOSE :
 This document describes the design and implementation of a bloom filter. TODO.
 Introduction :
+[2] Principle basis states that Wherever a list or a set is used and space is at a premium, consider using a bloom filter if the effect of the false positives can be mitigated.
 
 Dependencies :
 	1/ It is optional to use std::vector<> available with the Boost Library. Standard Library vector can be used too without side effects. Note that the objects can be deleted from the Tree but the container cannot be modified in any way that alters the offsets of remnant elements.
@@ -9,10 +10,21 @@ elsewhere
 	3/ Requires Boost library ver 1.41.0 (For building unit tests only).
 
 Public Interfaces :
+	1/ Constructor taking maximum memory that can be allocated.
+	2/ add() taking a byte array, as the form of an object to be inserted and returning a bool indicating a successful insertion. No error if object already exists.
+	3/ is_added() taking the byte array to verify if already present. returns a bool true to indicate that it is added.
 
-Static Data Model :
+Static Model :
+A set S = {x1 ... xn} n Objects are being described by an array of size 'm' bits. 'k' hash functions are used that hash uniformly in range (1 .. m). 
+Assume kn < m.
+Optimal value for k = m * (ln 2) / n.
+m >= n * log e * log(1/epsilon) ... for max false positive rate epsilon.
 
-Dynamic Data Model :
+Just two hash functions can simulate 'k' ones, by combining in a form like,
+gi(x) = h1(x) + i * h2(x), for all i = 1 .. k and gi(x) modulo table size.
+
+Dynamic Model :
+Actual hashing function used described here,
 [1] Uses the FNV-1a hash for simplicity and speed. 
 {
 FNV offset basis = 14695981039346656037
@@ -28,7 +40,7 @@ return hash;
 
 for each of the M hash functions,(re-use FNV computed hash)
 {
-	index = (h[m % 2] + m * h[2 + (((m + m % 2) %4) /2 ]) % size
+	index = (h[m % 2] + m * h[2 + ((m + m % 2) %4) /2 ]) % size
 }
 
 Using 64 bit unsigned numbers and splitting lower and upper 32 bit portions to gain two hashes at once.
@@ -42,4 +54,6 @@ Benchmarks : TODO
 
 References:
 [1] http://willwhim.wpengine.com/2011/09/03/producing-n-hash-functions-by-hashing-only-once/
+[2] Network applications of bloom filters, Broder, Mitzenmacher
+[3] Less hashing, same performance: Building a better bloom filters, Kirsch, Mitzenmacher
 
