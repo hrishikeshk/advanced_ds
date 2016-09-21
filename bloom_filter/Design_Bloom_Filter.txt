@@ -4,24 +4,23 @@ Introduction :
 [2] Principle basis states that Wherever a list or a set is used and space is at a premium, consider using a bloom filter if the effect of the false positives can be mitigated.
 
 Dependencies :
-	1/ It is optional to use std::vector<> available with the Boost Library. Standard Library vector can be used too without side effects. Note that the objects can be deleted from the Tree but the container cannot be modified in any way that alters the offsets of remnant elements.
-	2/ Tested on CentOS Linux 64-bit OS, gcc 4.4.7, gcc 4.8.1, but this should work
+	1/ Tested on CentOS Linux 64-bit OS, gcc 4.4.7, gcc 4.8.1, but this should work
 elsewhere
-	3/ Requires Boost library ver 1.41.0 (For building unit tests only).
+	2/ Requires Boost library ver 1.41.0 (For building unit tests only).
 
 Public Interfaces :
-	1/ Constructor taking maximum memory that can be allocated.
+	1/ Constructor taking maximum memory (in bits) that can be allocated and the number of hash functions to use.
 	2/ add() taking a byte array, as the form of an object to be inserted and returning a bool indicating a successful insertion. No error if object already exists.
 	3/ is_added() taking the byte array to verify if already present. returns a bool true to indicate that it is added.
 
 Static Model :
-A set S = {x1 ... xn} n Objects are being described by an array of size 'm' bits. 'k' hash functions are used that hash uniformly in range (1 .. m). 
-Assume kn < m.
-Optimal value for k = m * (ln 2) / n.
+A set S = {x1 ... xn}, n Objects are being described by an array of size 'm' bits. 'k' hash functions are used that hash uniformly in range (1 .. m). 
+Assume k.n < m.
+Optimal value for k = m * (log 2) / n.
 m >= n * log e * log(1/epsilon) ... for max false positive rate epsilon.
 
 Just two hash functions can simulate 'k' ones, by combining in a form like,
-gi(x) = h1(x) + i * h2(x), for all i = 1 .. k and gi(x) modulo table size.
+gi(x) = h1(x) + i * h2(x), for all i = 1 .. k and gi(x) modulo m.
 
 Dynamic Model :
 Actual hashing function used described here,
@@ -38,9 +37,9 @@ for each byte of data to be hashed
 return hash;
 }
 
-for each of the M hash functions,(re-use FNV computed hash)
+for each of the k hash functions,(re-use FNV computed hash)
 {
-	index = (h[m % 2] + m * h[2 + ((m + m % 2) %4) /2 ]) % size
+	index = (g[k % 2] + k * g[2 + ((k + k % 2) %4) /2 ]) % m
 }
 
 Using 64 bit unsigned numbers and splitting lower and upper 32 bit portions to gain two hashes at once.

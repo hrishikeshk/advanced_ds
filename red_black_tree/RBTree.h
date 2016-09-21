@@ -85,12 +85,12 @@ class AugRBTree{
         AugRBTree& operator=(const AugRBTree&) = delete;
 
 	template<UInt32 ta>
-	auto augment_accessor(UInt32 i){
+	auto augment_accessor(UInt32 i) -> decltype(std::get<ta>(m_tuple).aug_val_at(i)){
 		return std::get<ta>(m_tuple).aug_val_at(i);
 	}
 
         template<UInt32 ta>
-        auto find_with_aug(const Key& k, UInt32& ref){
+        auto find_with_aug(const Key& k, UInt32& ref) -> decltype(std::get<ta>(m_tuple).aug_val_at(ref)){
             UInt32 pos;
             find_detailed(k, ref, pos, FIND);
             return std::get<ta>(m_tuple).aug_val_at(pos);

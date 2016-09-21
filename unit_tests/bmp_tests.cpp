@@ -65,6 +65,11 @@ void resize_usage_bmp(){
 	for(UInt32 x = 10 * 8; x < 15 * 8; ++x){
 		BOOST_REQUIRE(bmp.is_marked(x) == false);
 	}
+
+	bmp.resize(5);
+	for(UInt32 x = 0; x < 5 * 8; ++x){
+		BOOST_REQUIRE(bmp.is_marked(x) == true);
+	}
 }
 
 void np_check_bmp(){

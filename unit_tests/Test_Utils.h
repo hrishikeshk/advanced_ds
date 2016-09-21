@@ -1,9 +1,11 @@
 #ifndef _TEST_UTILS_
 #define _TEST_UTILS_
 
+#include <stdlib.h>
 #include <string>
 #include <vector>
 #include <string.h>
+#include "TypeDefs.h"
 
 class Compound_Test{
 	public:
@@ -54,6 +56,23 @@ void permute_and_call(  const std::vector<UInt32>& original,
 			}
 		}
 	}
+}
+
+std::vector<UInt8> str_to_vec(const std::string& str){
+	std::vector<UInt8> vec(str.length());
+	for(UInt32 i = 0; i < str.length(); ++i){
+		vec[i] = str[i];
+	}
+	return vec;
+}
+
+std::vector<UInt8> rand_vec(UInt32 len){
+	std::vector<UInt8> vec(len);
+	UInt32 seedp = len;
+	for(UInt32 i = 0; i < len; ++i){
+		vec[i] = rand_r(&seedp) % (1 << 7);
+	}
+	return vec;
 }
 
 #endif
