@@ -4,7 +4,7 @@ WARN=-Wall
 
 DEBUG=-g -ggdb
 
-CC=/opt/rh/devtoolset-2/root/usr/bin/g++
+CC=g++
 
 SHAREDLIB_FLAGS=-shared -fPIC
 
@@ -12,4 +12,6 @@ FPIC_OBJ=-fPIC
 
 INCLUDES=-I $(SRC_DIR)
 
-OPTIONS=-D _DEBUG_BUILD_ --std=c++0x
+OPTIONS=-D _DEBUG_BUILD_ --std=c++14
+
+BOOST_INCLUDES=-I $(SRC_DIR)/../../boost/include

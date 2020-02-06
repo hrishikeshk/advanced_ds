@@ -7,6 +7,10 @@
 
 #include "Dependent_Includes.h"
 
+#ifdef __cplusplus
+extern "C"{
+#endif
+
 class BitMap{
 
 	public:
@@ -60,6 +64,10 @@ class BitMap{
 
 		const UInt8 byte_size = 8;
 };
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

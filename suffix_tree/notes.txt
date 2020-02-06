@@ -1,0 +1,7 @@
+https://www.geeksforgeeks.org/longest-prefix-also-suffix/
+GfG applications of Suffix trees 1 - 6
+
+
+A suffix tree for a given text is a compressed trie of all suffixes of that text. In applications, we prefer to encode voluminous text into a suffix tree and then search various (expectedly shorter)patterns within the tree in time proportional to length of the pattern. The text is assumed to be constant or changing infrequently.
+
+

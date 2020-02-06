@@ -9,6 +9,10 @@
 
 #include "BitMap.h"
 
+#ifdef __cplusplus
+extern "C"{
+#endif
+
 class BloomFilter{
 
 	public:
@@ -31,6 +35,10 @@ class BloomFilter{
 
 	UInt32* compute_hash(const std::vector<UInt8>&);
 };
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

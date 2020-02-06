@@ -7,6 +7,7 @@
 #include <bitset>
 
 #include "Test_Utils.h"
+
 #include "BloomFilter.h"
 
 using namespace boost::unit_test;
